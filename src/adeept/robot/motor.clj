@@ -53,8 +53,8 @@
   - motor: map returned by `create-motor`
   - forward?: boolean indicating forward (true) or backward (false)"
   [{:keys [in1 in2]} forward?]
-  (.state in1 (if forward? DigitalState/HIGH DigitalState/LOW))
-  (.state in2 (if forward? DigitalState/LOW DigitalState/HIGH)))
+  (.state in1 (if forward? DigitalState/LOW DigitalState/HIGH))
+  (.state in2 (if forward? DigitalState/HIGH DigitalState/LOW)))
 
 (defn set-speed!
   "Sets the PWM speed for a motor.
@@ -87,10 +87,10 @@
                  (set-direction! right-motor true))
     :backward (do (set-direction! left-motor false)
                   (set-direction! right-motor false))
-    :left (do (set-direction! left-motor true)
-              (set-direction! right-motor false))
-    :right (do (set-direction! left-motor false)
-               (set-direction! right-motor true)))
+    :left (do (set-direction! left-motor false)
+              (set-direction! right-motor true))
+    :right (do (set-direction! left-motor true)
+               (set-direction! right-motor false)))
   (set-speed! left-motor 1.0)
   (set-speed! right-motor 1.0))
 
