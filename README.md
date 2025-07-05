@@ -8,5 +8,5 @@ The project is in RnD stages, so at the moment all that can be done is run
 a demo of motor control. This can be run using the following command:
 
 ```bash
-sudo clojure -M -m adeept.robot.motor
+sudo clojure -X:robot
 ```
