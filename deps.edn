@@ -1,5 +1,9 @@
 {:paths ["src"]
 
+ :aliases 
+  {:robot
+   {:exec-fn adeept.robot.main/main}}
+
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
 
         ;; Logging (to avoid SLF4J warnings)

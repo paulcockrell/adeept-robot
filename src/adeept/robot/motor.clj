@@ -8,7 +8,7 @@
 
 (defonce pi4j (Pi4J/newAutoContext))
 
-(defn digital-out [id pin]
+(defn- digital-out [id pin]
   (let [provider (.provider pi4j "pigpio-digital-output")
         config (-> (DigitalOutput/newConfigBuilder pi4j)
                    (.id id)
@@ -17,13 +17,9 @@
                    (.shutdown DigitalState/LOW)
                    (.initial DigitalState/LOW)
                    (.build))]
-
-    (println "Creating digital output for GPIO" pin)
-    (println "Using digital output provider:" (.id provider))
-
     (.create provider config)))
 
-(defn pwm-out [id pin]
+(defn- pwm-out [id pin]
   (let [config (-> (Pwm/newConfigBuilder pi4j)
                    (.id id)
                    (.name id)
@@ -37,76 +33,70 @@
                    (.build))]
     (.create pi4j config)))
 
-(defonce ena (pwm-out "ENA" 4))
-(defonce enb (pwm-out "ENB" 17))
-(defonce motor-a-in1 (digital-out "MotorA-IN1" 26))
-(defonce motor-a-in2 (digital-out "MotorA-IN2" 21))
-(defonce motor-b-in1 (digital-out "MotorB-IN1" 27))
-(defonce motor-b-in2 (digital-out "MotorB-IN2" 18))
+(defn create-motor
+  "Creates a motor map with enable (PWM) and two direction pins.
+  Parameters:
+  - name: string label for the motor (used in ID naming)
+  - en-pin: BCM GPIO pin for speed control (PWM)
+  - in1-pin: BCM GPIO pin for direction control
+  - in2-pin: BCM GPIO pin for direction control
+  Returns: map with keys :name, :en1, :in1, :in2"
+  [name en1-pin in1-pin in2-pin]
+  {:name name
+   :en1 (pwm-out (str name "-EN1") en1-pin)
+   :in1 (digital-out (str name "-IN1") in1-pin)
+   :in2 (digital-out (str name "-IN2") in2-pin)})
 
-(defn set-direction [in1 in2 fwd?]
-  (.state in1 (if fwd? DigitalState/HIGH DigitalState/LOW))
-  (.state in2 (if fwd? DigitalState/LOW DigitalState/HIGH)))
+(defn set-direction!
+  "Sets the motor direction.
+  Parameters:
+  - motor: map returned by `create-motor`
+  - forward?: boolean indicating forward (true) or backward (false)"
+  [{:keys [in1 in2]} forward?]
+  (.state in1 (if forward? DigitalState/HIGH DigitalState/LOW))
+  (.state in2 (if forward? DigitalState/LOW DigitalState/HIGH)))
 
-(defn set-speed [pwm duty]
+(defn set-speed!
+  "Sets the PWM speed for a motor.
+  Parameters:
+  - motor: map from `create-motor`
+  - duty: float (0.0–1.0), interpreted as percentage of full speed"
+  [{:keys [en1]} duty]
   (let [speed (* 100 duty)]
-    (println "setting speed to" speed)
-    (.dutyCycle pwm speed)
-    (.on pwm)))
+    (.dutyCycle en1 speed)
+    (.on en1)))
 
-(defn stop-motor [pwm in1 in2]
-  (.off pwm)
+(defn stop-motor!
+  "Stops a single motor by disabling PWM and setting direction pins LOW.
+  Parameters:
+  - motor: map from `create-motor`"
+  [{:keys [en1 in1 in2]}]
+  (.off en1)
   (.state in1 DigitalState/LOW)
   (.state in2 DigitalState/LOW))
 
-(defn left []
-  (set-direction motor-a-in1 motor-a-in2 true)
-  (set-direction motor-b-in1 motor-b-in2 false)
-  (set-speed ena 1.0)
-  (set-speed enb 1.0))
+(defn drive!
+  "Drives two motors in a specified direction.
+  Parameters:
+  - left-motor: motor map for left side
+  - right-motor: motor map for right side
+  - dir: keyword (:forward, :backward, :left, :right)"
+  [left-motor right-motor dir]
+  (case dir
+    :forward (do (set-direction! left-motor true)
+                 (set-direction! right-motor true))
+    :backward (do (set-direction! left-motor false)
+                  (set-direction! right-motor false))
+    :left (do (set-direction! left-motor true)
+              (set-direction! right-motor false))
+    :right (do (set-direction! left-motor false)
+               (set-direction! right-motor true)))
+  (set-speed! left-motor 1.0)
+  (set-speed! right-motor 1.0))
 
-(defn right []
-  (set-direction motor-a-in1 motor-a-in2 false)
-  (set-direction motor-b-in1 motor-b-in2 true)
-  (set-speed ena 1.0)
-  (set-speed enb 1.0))
-
-(defn forward []
-  (set-direction motor-a-in1 motor-a-in2 true)
-  (set-direction motor-b-in1 motor-b-in2 true)
-  (set-speed ena 1.0)
-  (set-speed enb 1.0))
-
-(defn backward []
-  (set-direction motor-a-in1 motor-a-in2 false)
-  (set-direction motor-b-in1 motor-b-in2 false)
-  (set-speed ena 1.0)
-  (set-speed enb 1.0))
-
-(defn stop []
-  (stop-motor ena motor-a-in1 motor-a-in2)
-  (stop-motor enb motor-b-in1 motor-b-in2))
-
-(defn -main []
-  (println "Driving forward")
-  (forward)
-  (Thread/sleep 1000)
-  (println "Stopping")
-  (stop)
-  (Thread/sleep 500)
-  (println "Driving backward")
-  (backward)
-  (Thread/sleep 1000)
-  (println "Stopping")
-  (stop)
-  (Thread/sleep 500)
-  (println "Turning left")
-  (left)
-  (Thread/sleep 1000)
-  (println "Stopping")
-  (stop)
-  (Thread/sleep 500)
-  (println "Turning right")
-  (right)
-  (Thread/sleep 1000)
-  (.shutdown pi4j))
+(defn stop-all!
+  "Stops all motors in a collection.
+  Parameters:
+  - motors: sequence of motor maps"
+  [motors]
+  (doseq [m motors] (stop-motor! m)))
