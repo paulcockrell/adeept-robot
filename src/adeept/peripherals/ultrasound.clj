@@ -11,25 +11,25 @@
 (def max-echo-nanos 25000000)
 
 (defn- make-trig-pin [pi4j pin]
-  (-> (DigitalOutput/newConfigBuilder pi4j)
-      (.id (str "ultra-trig-" pin))
-      (.name "HC-SR04 Trigger")
-      (.address pin)
-      (.shutdown DigitalState/LOW)
-      (.initial DigitalState/LOW)
-      (.provider "pigpio-digital-output")
-      (.build)
-      (.create pi4j)))
+  (let [provider (.provider pi4j "pigpio-digital-output")
+        config (-> (DigitalOutput/newConfigBuilder pi4j)
+                   (.id (str "ultra-trig-" pin))
+                   (.name "HC-SR04 Trigger")
+                   (.address (int pin))
+                   (.shutdown DigitalState/LOW)
+                   (.initial DigitalState/LOW)
+                   (.build))]
+    (.create provider config)))
 
 (defn- make-echo-pin [pi4j pin]
-  (-> (DigitalInput/newConfigBuilder pi4j)
-      (.id (str "ultra-echo-" pin))
-      (.name "HC-SR04 Echo")
-      (.address pin)
-      (.pull PullResistance/PULL_DOWN)
-      (.provider "pigpio-digital-input")
-      (.build)
-      (.create pi4j)))
+  (let [provider (.provider pi4j "pigpio-digital-input")
+        config (-> (DigitalInput/newConfigBuilder pi4j)
+                   (.id (str "ultra-echo-" pin))
+                   (.name "HC-SR04 Echo")
+                   (.address (int pin))
+                   (.pull PullResistance/PULL_DOWN)
+                   (.build))]
+    (.create provider config)))
 
 (defn create-sensor
   "Constructs an ultrasound sensor map. Pass pin config map: {:trig BCM_PIN :echo BCM_PIN}"

@@ -8,6 +8,10 @@
   "Entry point for the robot control app"
   [_]
   (let [sys (system/create-system)]
+    (print "Measuring distance to obstacle... ")
+    (println
+     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
+
     (println "Driving forward")
     (motor/drive!
      (:left-motor sys)
@@ -20,9 +24,9 @@
     (motor/stop-all! [(:left-motor sys)
                       (:right-motor sys)])
 
-    (println "Measuring distance to obstacle")
+    (print "Measuring distance to obstacle... ")
     (println
-     (ultrasound/measure (:ultrasound sys)) "cm")
+     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
 
     (Thread/sleep 250)
 
@@ -38,9 +42,9 @@
     (motor/stop-all! [(:left-motor sys)
                       (:right-motor sys)])
 
-    (println "Measuring distance to obstacle")
+    (print "Measuring distance to obstacle... ")
     (println
-     (ultrasound/measure (:ultrasound sys)) "cm")
+     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
 
     (Thread/sleep 250)
 
@@ -56,9 +60,9 @@
     (motor/stop-all! [(:left-motor sys)
                       (:right-motor sys)])
 
-    (println "Measuring distance to obstacle")
+    (print "Measuring distance to obstacle... ")
     (println
-     (ultrasound/measure (:ultrasound sys)) "cm")
+     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
 
     (Thread/sleep 250)
 
@@ -68,8 +72,14 @@
      (:right-motor sys)
      :right)
 
-    (println "Measuring distance to obstacle")
+    (Thread/sleep 1000)
+
+    (println "Stopping")
+    (motor/stop-all! [(:left-motor sys)
+                      (:right-motor sys)])
+
+    (print "Measuring distance to obstacle... ")
     (println
-     (ultrasound/measure (:ultrasound sys)) "cm")
+     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
 
     (system/shutdown! sys)))
