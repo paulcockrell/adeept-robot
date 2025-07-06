@@ -1,14 +1,11 @@
-(ns adeept.robot.motor
+(ns adeept.peripherals.motor
   (:import
-   com.pi4j.Pi4J
    com.pi4j.io.gpio.digital.DigitalOutput
    com.pi4j.io.gpio.digital.DigitalState
    com.pi4j.io.pwm.PwmType
    com.pi4j.io.pwm.Pwm))
 
-(defonce pi4j (Pi4J/newAutoContext))
-
-(defn- digital-out [id pin]
+(defn- digital-out [pi4j id pin]
   (let [provider (.provider pi4j "pigpio-digital-output")
         config (-> (DigitalOutput/newConfigBuilder pi4j)
                    (.id id)
@@ -19,7 +16,7 @@
                    (.build))]
     (.create provider config)))
 
-(defn- pwm-out [id pin]
+(defn- pwm-out [pi4j id pin]
   (let [config (-> (Pwm/newConfigBuilder pi4j)
                    (.id id)
                    (.name id)
@@ -36,16 +33,17 @@
 (defn create-motor
   "Creates a motor map with enable (PWM) and two direction pins.
   Parameters:
+  - pi4j: PI4J context
   - name: string label for the motor (used in ID naming)
   - en-pin: BCM GPIO pin for speed control (PWM)
   - in1-pin: BCM GPIO pin for direction control
   - in2-pin: BCM GPIO pin for direction control
   Returns: map with keys :name, :en1, :in1, :in2"
-  [name en1-pin in1-pin in2-pin]
+  [pi4j name en1-pin in1-pin in2-pin]
   {:name name
-   :en1 (pwm-out (str name "-EN1") en1-pin)
-   :in1 (digital-out (str name "-IN1") in1-pin)
-   :in2 (digital-out (str name "-IN2") in2-pin)})
+   :en1 (pwm-out pi4j (str name "-EN1") en1-pin)
+   :in1 (digital-out pi4j (str name "-IN1") in1-pin)
+   :in2 (digital-out pi4j (str name "-IN2") in2-pin)})
 
 (defn set-direction!
   "Sets the motor direction.
