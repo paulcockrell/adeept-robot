@@ -1,85 +1,22 @@
 (ns adeept.robot.main
   (:require
    [adeept.robot.system :as system]
+   [adeept.robot.steering :as steering]
    [adeept.peripherals.motor :as motor]
    [adeept.peripherals.ultrasound :as ultrasound]))
 
-(defn ^:exec main
-  "Entry point for the robot control app"
+(defn ^:exec main 
   [_]
-  (let [sys (system/create-system)]
-    (print "Measuring distance to obstacle... ")
-    (println
-     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
+  (let [sys (system/create-system)
+        stop-loop (steering/start-behavior-loop
+                   {:system sys
+                    :threshold 25
+                    :interval 200})]
 
-    (println "Driving forward")
-    (motor/drive!
-     (:left-motor sys)
-     (:right-motor sys)
-     :forward)
+    (println sys)
+    ;; Let it run a while...
+    (Thread/sleep 20000)
 
-    (Thread/sleep 1000)
-
-    (println "Stopping")
-    (motor/stop-all! [(:left-motor sys)
-                      (:right-motor sys)])
-
-    (print "Measuring distance to obstacle... ")
-    (println
-     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
-
-    (Thread/sleep 250)
-
-    (println "Driving backward")
-    (motor/drive!
-     (:left-motor sys)
-     (:right-motor sys)
-     :backward)
-
-    (Thread/sleep 1000)
-
-    (println "Stopping")
-    (motor/stop-all! [(:left-motor sys)
-                      (:right-motor sys)])
-
-    (print "Measuring distance to obstacle... ")
-    (println
-     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
-
-    (Thread/sleep 250)
-
-    (println "Turning left")
-    (motor/drive!
-     (:left-motor sys)
-     (:right-motor sys)
-     :left)
-
-    (Thread/sleep 1000)
-
-    (println "Stopping")
-    (motor/stop-all! [(:left-motor sys)
-                      (:right-motor sys)])
-
-    (print "Measuring distance to obstacle... ")
-    (println
-     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
-
-    (Thread/sleep 250)
-
-    (println "Turning right")
-    (motor/drive!
-     (:left-motor sys)
-     (:right-motor sys)
-     :right)
-
-    (Thread/sleep 1000)
-
-    (println "Stopping")
-    (motor/stop-all! [(:left-motor sys)
-                      (:right-motor sys)])
-
-    (print "Measuring distance to obstacle... ")
-    (println
-     (ultrasound/measure (:ultrasound-sensor sys)) "cm")
-
+    ;; Stop it cleanly
+    (stop-loop)
     (system/shutdown! sys)))
