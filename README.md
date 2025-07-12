@@ -2,6 +2,13 @@
 
 Clojure project to control the [Adeept RaspberyPI Robot Car](https://www.adeept.com/awr_p0122.html)
 
+## Prerequisits
+
+Install pigpio
+```bash
+sudo apt install pigpiod
+```
+
 ## Run
 
 The project is in RnD stages, so at the moment all that can be done is run

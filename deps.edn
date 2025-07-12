@@ -10,12 +10,15 @@
         org.slf4j/slf4j-simple {:mvn/version "2.0.9"}
 
         ;; Pi4J Core (provides Context etc)
-        com.pi4j/pi4j-core {:mvn/version "2.3.0"}
+        com.pi4j/pi4j-core {:mvn/version "2.5.0"}
 
         ;; Raspberry Pi-specific platform plugin
-        com.pi4j/pi4j-plugin-raspberrypi {:mvn/version "2.3.0"}
+        com.pi4j/pi4j-plugin-raspberrypi {:mvn/version "2.5.0"}
+
+        ;; linuxfs-i2c
+        com.pi4j/pi4j-plugin-linuxfs {:mvn/version "2.5.0"}
 
         ;; PiGPIO plugin for I2C, PWM, GPIO
-        com.pi4j/pi4j-plugin-pigpio {:mvn/version "2.3.0"}}}
+        com.pi4j/pi4j-plugin-pigpio {:mvn/version "2.5.0"}}}
 
 

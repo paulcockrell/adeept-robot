@@ -1,8 +1,10 @@
 (ns adeept.robot.system
   (:require
    [adeept.peripherals.motor :as motor]
-   [adeept.peripherals.ultrasound :as ultrasound])
+   [adeept.peripherals.ultrasound :as ultrasound]
+   [adeept.peripherals.servo :as servo])
   (:import
+   com.pi4j.plugin.raspberrypi.RaspberryPiPlugin
    com.pi4j.Pi4J))
 
 ;; Left motor BCM pins
@@ -26,7 +28,9 @@
     {:pi4j       pi4j
      :left-motor (motor/create-motor pi4j "LEFT" motor-a-en1 motor-a-in1 motor-a-in2)
      :right-motor (motor/create-motor pi4j "RIGHT" motor-b-en1 motor-b-in1 motor-b-in2)
-     :ultrasound-sensor (ultrasound/create-sensor pi4j {:trig ultrasound-trig :echo ultrasound-echo})}))
+     :ultrasound-sensor (ultrasound/create-sensor pi4j {:trig ultrasound-trig :echo ultrasound-echo})
+     :servo (servo/create-servo pi4j)
+    }))
 
 (defn shutdown!
   "Shuts down the Pi4J context and releases all GPIO resources."

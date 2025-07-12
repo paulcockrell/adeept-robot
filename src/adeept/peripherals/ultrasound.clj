@@ -38,7 +38,7 @@
    :echo (make-echo-pin pi4j echo)})
 
 (defn- wait-for-echo
-  "Busy waits until echo pin is HIGH or LOW depending on `high?`, with timeout."
+  "Waits until echo pin is HIGH or LOW depending on `high?`, with timeout."
   [^DigitalInput echo high?]
   (let [start (System/nanoTime)]
     (loop []

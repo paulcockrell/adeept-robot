@@ -7,10 +7,14 @@
   (motor/drive!
    (:left-motor system)
    (:right-motor system)
-   :forward)
+   :forward))
 
-  (Thread/sleep 1000))
-
+(defn reverse [system] 
+  (println "Reverse")
+  (motor/drive!
+   (:left-motor system)
+   (:right-motor system)
+   :backward))
 
 (defn stop [system] 
   (println "Stopping")
@@ -26,9 +30,29 @@
    (:right-motor system)
    :left)
 
-  (Thread/sleep 1000)
+  (Thread/sleep 500)
 
   (stop system))
+
+(defn turn-right [system] 
+  (println "Turning right")
+
+  (motor/drive!
+   (:left-motor system)
+   (:right-motor system)
+   :right)
+
+  (Thread/sleep 500)
+
+  (stop system))
+
+(defn turn [sys dir]
+  (case dir
+    :left (turn-left sys)
+    :right (turn-right sys)
+    (if (= 1 (rand-int 2))
+          (turn-left sys)
+          (turn-right sys))))
 
 (defn start-behavior-loop
   "Spawns a background loop that reads ultrasound and drives motors.
@@ -42,18 +66,19 @@
         thread  (Thread.
                  (fn []
                    (while @running
-
                      (let [dist (ultrasound/measure (:ultrasound-sensor system))]
                        (println "Distance:" dist "cm")
                        (cond
                          (neg? dist)
-                         (println "Invalid reading.")
+                         (do 
+                           (println "Invalid reading.")
+                           (stop system))
 
                          (< dist threshold)
                          (do
                            (println "Obstacle detected! Turning...")
                            (stop system)
-                           (turn-left system))
+                           (turn system :rand))
                          :else
                            (drive system))
                      (Thread/sleep interval)))))]
