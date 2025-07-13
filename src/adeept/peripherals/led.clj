@@ -7,7 +7,7 @@
 (def default-config
   {:led-count 16
    :led-pin 12
-   :led-freq-hz 800_000
+   :led-freq-hz 800000
    :led-dma 10
    :led-brightness 255
    :led-invert false
@@ -28,7 +28,6 @@
                    (.initial DigitalState/LOW)
                    (.build))]
     (.create provider config)))
-
 
 ;; Replace with actual GPIO/LED initialization logic
 (defn init-strip []

@@ -1,9 +1,8 @@
 (ns adeept.peripherals.servo
-  (:require 
-    [clojure.math :as math])
+  (:require
+   [clojure.math :as math])
   (:import
-    com.pi4j.io.i2c.I2C
-    com.pi4j.util.Console))
+   com.pi4j.io.i2c.I2C))
 
 (def pca9685-addr 0x40)
 (def pwm-freq 50)
@@ -14,11 +13,12 @@
 (def prescale-reg 0xFE)
 (def led0-on-l 0x06)
 
-(defonce state (atom {:org-pos 300}))
 (def look-direction 1)
 (def look-max 500)
 (def look-min 100)
 (def default-home 300)
+
+(defonce state (atom {:org-pos 300}))
 
 (defn calc-prescale [freq]
   (int (math/round (- (/ osc-clock pwm-res freq) 1))))
@@ -28,7 +28,7 @@
                    (.id "pca9685")
                    (.name "PWM Servo Driver")
                    (.bus (int 1))
-                   (.device (int 0x40))
+                   (.device (int pca9685-addr))
                    (.provider "linuxfs-i2c")
                    (.build))]
     (.create pi4j config)))
@@ -65,10 +65,6 @@
       (max min-val)
       int))
 
-(defn microseconds->pulse [us]
-  ;; Map 1000-2000us to 0–4096 (based on 50Hz)
-  (int (* us (/ pwm-res 20000.0)))) ;; 20ms period
-
 (defn camera-ang! [i2c direction & [ang]]
   (let [ang (if (or (nil? ang) (= ang "no")) 50 ang)
         dir look-direction
@@ -86,37 +82,12 @@
     (set-pwm! i2c 0 0 new-pos)))
 
 (defn create-servo
-  "Constructs a servo map"
+  "Constructs a servo i2c instance"
   [pi4j]
   (let [servo (create-i2c pi4j)]
-   (set-pwm-freq! servo pwm-freq)
-   servo))
+    (set-pwm-freq! servo pwm-freq)
+    servo))
 
 (defn clean-all! [i2c]
   (doseq [ch (range 16)]
     (set-pwm! i2c ch 0 0)))
-
-; (defn -main []
-;   (let [ctx (create-context)
-;         i2c (create-i2c ctx)]
-;     (set-pwm-freq! i2c pwm-freq)
-;     (camera-ang! i2c "lookup")
-;     (Thread/sleep 1000)
-;     (camera-ang! i2c "lookup")
-;     (Thread/sleep 1000)
-;     (camera-ang! i2c "lookup")
-;     (Thread/sleep 1000)
-;     (camera-ang! i2c "lookup")
-;     (Thread/sleep 1000)
-;     (camera-ang! i2c "lookdown")
-;     (Thread/sleep 1000)
-;     (camera-ang! i2c "lookdown")
-;     (Thread/sleep 1000)
-;     (camera-ang! i2c "home")
-;     (Thread/sleep 1000)
-;     (clean-all! i2c)
-;     (.shutdown ctx)))
-;
-; (comment
-;   (-main))
-;
