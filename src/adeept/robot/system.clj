@@ -2,7 +2,8 @@
   (:require
    [adeept.peripherals.motor :as motor]
    [adeept.peripherals.ultrasound :as ultrasound]
-   [adeept.peripherals.servo :as servo])
+   [adeept.peripherals.servo :as servo]
+   [adeept.peripherals.line-track :as line-track])
   (:import
    com.pi4j.plugin.raspberrypi.RaspberryPiPlugin
    com.pi4j.Pi4J))
@@ -21,6 +22,11 @@
 (defonce ultrasound-trig 11)
 (defonce ultrasound-echo 8)
 
+;; Line track BCM pins
+(defonce ldr-pin-l 20)
+(defonce ldr-pin-m 16)
+(defonce ldr-pin-r 19)
+
 (defn create-system
   "Boots the Pi4J context and all robot peripherals."
   []
@@ -29,8 +35,8 @@
      :left-motor (motor/create-motor pi4j "LEFT" motor-a-en1 motor-a-in1 motor-a-in2)
      :right-motor (motor/create-motor pi4j "RIGHT" motor-b-en1 motor-b-in1 motor-b-in2)
      :ultrasound-sensor (ultrasound/create-sensor pi4j {:trig ultrasound-trig :echo ultrasound-echo})
-     :servo (servo/create-servo pi4j)
-    }))
+     :line-track-sensor (line-track/create-sensor pi4j {:ldr-pin-l ldr-pin-l :ldr-pin-m ldr-pin-m :ldr-pin-r ldr-pin-r})
+     :servo (servo/create-servo pi4j)}))
 
 (defn shutdown!
   "Shuts down the Pi4J context and releases all GPIO resources."

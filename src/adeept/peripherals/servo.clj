@@ -13,12 +13,8 @@
 (def prescale-reg 0xFE)
 (def led0-on-l 0x06)
 
-(def look-direction 1)
-(def look-max 500)
-(def look-min 100)
-(def default-home 300)
-
-(defonce state (atom {:org-pos 300}))
+(def min-ang 500) ; inverted, i think i put the servo in upside down
+(def max-ang 100)
 
 (defn calc-prescale [freq]
   (int (math/round (- (/ osc-clock pwm-res freq) 1))))
@@ -43,9 +39,6 @@
   (let [prescale (calc-prescale freq)
         oldmode (read-byte! i2c mode1-reg)
         sleepmode (bit-or (bit-and oldmode 0x7F) 0x10)] ;; sleep
-
-    (println "Prescale calculated:" prescale)
-
     (write-byte! i2c mode1-reg sleepmode)
     (write-byte! i2c prescale-reg prescale)
     (write-byte! i2c mode1-reg oldmode)
@@ -59,27 +52,19 @@
     (write-byte! i2c (+ base 2) (bit-and off 0xFF))
     (write-byte! i2c (+ base 3) (bit-shift-right off 8))))
 
-(defn ctrl-range [raw max-val min-val]
-  (-> raw
-      (min max-val)
-      (max min-val)
-      int))
+(defn map-range
+  "Maps `value` from [in-min, in-max] to [out-min, out-max]. No clamping."
+  [value in-min in-max out-min out-max]
+  (int (+ out-min (* (/ (- value in-min)
+                   (- in-max in-min))
+                (- out-max out-min)))))
 
-(defn camera-ang! [i2c direction & [ang]]
-  (let [ang (if (or (nil? ang) (= ang "no")) 50 ang)
-        dir look-direction
-        org-pos (:org-pos @state)
-        new-pos (case [dir direction]
-                  [1 "lookdown"] (ctrl-range (+ org-pos ang) look-max look-min)
-                  [1 "lookup"]   (ctrl-range (- org-pos ang) look-max look-min)
-                  [1 "home"]     default-home
-                  [0 "lookdown"] (ctrl-range (- org-pos ang) look-max look-min)
-                  [0 "lookup"]   (ctrl-range (+ org-pos ang) look-max look-min)
-                  [0 "home"]     default-home
-                  org-pos)]
-    (println "camera-ang:" direction "org-pos:" org-pos "new-pos:" new-pos)
-    (swap! state assoc :org-pos new-pos)
-    (set-pwm! i2c 0 0 new-pos)))
+(defn set-ang!
+  "Takes percentage value and translates and sets the camera angle"
+  [i2c percent]
+  (let [ang (map-range percent 0 100 min-ang max-ang)]
+    (println "percent" percent "ang:" ang)
+    (set-pwm! i2c 0 0 ang)))
 
 (defn create-servo
   "Constructs a servo i2c instance"
