@@ -1,5 +1,7 @@
 (ns robot.system
   (:require
+   [mini-ros.core :as mini-ros-core]
+   [mini-ros.motor-arbiter :as mini-ros-motor-arbiter]
    [peripherals.motor :as motor]
    [peripherals.ultrasound :as ultrasound]
    [peripherals.servo :as servo]
@@ -43,11 +45,12 @@
 (defn start-nodes! [system]
   (let [{:keys [motors sensors servo]} system
         {:keys [ultrasound-sensor line-track-sensor]} sensors]
-    [(mini-ros.core/start-line-tracker line-track-sensor line-track/status 100)
-     (mini-ros.core/start-ultrasound ultrasound-sensor ultrasound/measure 100)
-     (mini-ros.core/line-tracker-node motors motor/drive! motor/stop-all!)
-     (mini-ros.core/obstacle-avoidance-node motors motor/drive! motor/stop-all! 10)
-     (mini-ros.core/logger-node)]))
+    [(mini-ros-motor-arbiter/motor-arbiter-node (:motors system) motor/drive! motor/stop-all!)
+     (mini-ros-core/start-line-tracker line-track-sensor line-track/status 100)
+     (mini-ros-core/start-ultrasound ultrasound-sensor ultrasound/measure 100)
+     (mini-ros-core/line-follow-node)
+     (mini-ros-core/obstacle-avoidance-node 10)
+     (mini-ros-core/logger-node)]))
 
 (defn shutdown!
   "Shuts down the Pi4J context and releases all GPIO resources."
