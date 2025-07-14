@@ -1,8 +1,8 @@
 {:paths ["src"]
 
- :aliases 
-  {:robot
-   {:exec-fn adeept.robot.main/main}}
+ :aliases
+ {:robot
+  {:exec-fn robot.main/main}}
 
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
 

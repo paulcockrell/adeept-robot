@@ -1,7 +1,7 @@
-(ns adeept.robot.steering
-  (:require [adeept.peripherals.ultrasound :as ultrasound]
-            [adeept.peripherals.line-track :as line-track]
-            [adeept.peripherals.motor :as motor]))
+(ns robot.steering
+  (:require [peripherals.ultrasound :as ultrasound]
+            [peripherals.line-track :as line-track]
+            [peripherals.motor :as motor]))
 
 (defn drive [system]
   (println "Drive")

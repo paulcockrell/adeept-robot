@@ -1,4 +1,4 @@
-(ns adeept.peripherals.line-track
+(ns peripherals.line-track
   (:import
    com.pi4j.io.gpio.digital.DigitalInput
    com.pi4j.io.gpio.digital.PullResistance))

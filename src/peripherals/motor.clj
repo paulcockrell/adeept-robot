@@ -1,4 +1,4 @@
-(ns adeept.peripherals.motor
+(ns peripherals.motor
   (:import
    com.pi4j.io.gpio.digital.DigitalOutput
    com.pi4j.io.gpio.digital.DigitalState
