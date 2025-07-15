@@ -43,9 +43,9 @@
      :servo servo}))
 
 (defn start-nodes! [system]
-  (let [{:keys [motors sensors servo]} system
+  (let [{:keys [motors sensors _servo]} system
         {:keys [ultrasound-sensor line-track-sensor]} sensors]
-    [(mini-ros-motor-arbiter/motor-arbiter-node (:motors system) motor/drive! motor/stop-all!)
+    [(mini-ros-motor-arbiter/motor-arbiter-node motors motor/drive! motor/stop-all!)
      (mini-ros-core/start-line-tracker line-track-sensor line-track/status 100)
      (mini-ros-core/start-ultrasound ultrasound-sensor ultrasound/measure 100)
      (mini-ros-core/line-follow-node)

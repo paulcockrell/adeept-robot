@@ -2,7 +2,7 @@
   (:require
    [robot.system :refer [create-system start-nodes! shutdown!]]))
 
-(defn add-shutdown-hook! [system]
+(defn- add-shutdown-hook! [system]
   (.addShutdownHook
    (Runtime/getRuntime)
    (Thread. #(do
