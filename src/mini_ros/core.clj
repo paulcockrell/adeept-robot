@@ -34,7 +34,7 @@
 (defn start-ultrasound [sensor read-fn interval-ms]
   (go-loop []
     (let [dist (read-fn sensor)]
-      (publish! :ultrasound/measure dist)
+      (publish! :ultrasound/distance dist)
       (<! (timeout interval-ms))
       (recur))))
 
@@ -43,8 +43,8 @@
     (go-loop []
       (let [{:keys [payload]} (<! ch)]
         (cond
-          (:middle payload) (publish! :line/cmd :forward)
           (:left payload)   (publish! :line/cmd :left)
+          (:middle payload) (publish! :line/cmd :forward)
           (:right payload)  (publish! :line/cmd :right)
           :else             (publish! :line/cmd :stop)))
       (recur))))
@@ -53,9 +53,8 @@
   (let [ch (subscribe :ultrasound/distance)]
     (go-loop []
       (let [{:keys [payload]} (<! ch)]
-        (if (< payload threshold)
-          (publish! :avoidance/cmd :stop)
-          (publish! :avoidance/cmd :forward)))
+        (when (< payload threshold)
+          (publish! :avoidance/cmd :stop)))
       (recur))))
 
 (defn logger-node []

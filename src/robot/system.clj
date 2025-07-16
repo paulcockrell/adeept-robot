@@ -24,18 +24,18 @@
 (defonce ultrasound-echo 8)
 
 ;; Line track BCM pins
-(defonce ldr-pin-l 20)
-(defonce ldr-pin-m 16)
-(defonce ldr-pin-r 19)
+(defonce ldr-left-pin 20)
+(defonce ldr-middle-pin 16)
+(defonce ldr-right-pin 19)
 
 (defn create-system
   "Boots the Pi4J context and robot peripherals"
   []
   (let [pi4j (Pi4J/newAutoContext)
-        motors {:left (motor/create-motor pi4j "LEFT" motor-a-en1 motor-a-in1 motor-a-in2)
-                :right (motor/create-motor pi4j "RIGHT" motor-b-en1 motor-b-in1 motor-b-in2)}
+        motors {:left-motor (motor/create-motor pi4j "LEFT MOTOR" motor-a-en1 motor-a-in1 motor-a-in2)
+                :right-motor (motor/create-motor pi4j "RIGHT MOTOR" motor-b-en1 motor-b-in1 motor-b-in2)}
         sensors {:ultrasound-sensor (ultrasound/create-sensor pi4j {:trig ultrasound-trig :echo ultrasound-echo})
-                 :line-track-sensor (line-track/create-sensor pi4j {:ldr-pin-l ldr-pin-l :ldr-pin-m ldr-pin-m :ldr-pin-r ldr-pin-r})}
+                 :line-track-sensor (line-track/create-sensor pi4j {:ldr-left-pin ldr-left-pin :ldr-middle-pin ldr-middle-pin :ldr-right-pin ldr-right-pin})}
         servo (servo/create-servo pi4j)]
     {:pi4j pi4j
      :motors motors
@@ -45,12 +45,17 @@
 (defn start-nodes! [system]
   (let [{:keys [motors sensors _servo]} system
         {:keys [ultrasound-sensor line-track-sensor]} sensors]
-    [(mini-ros-motor-arbiter/motor-arbiter-node motors motor/drive! motor/stop-all!)
-     (mini-ros-core/start-line-tracker line-track-sensor line-track/status 100)
-     (mini-ros-core/start-ultrasound ultrasound-sensor ultrasound/measure 100)
+    [; Responder nodes - act upon logic node output, e.g will control motors
+     (mini-ros-motor-arbiter/motor-arbiter-node motors motor/drive! motor/stop-all!)
+     ;(mini-ros-core/logger-node)
+
+     ; Logic nodes - read sensor node data and publish actions, e.g ultrasound
      (mini-ros-core/line-follow-node)
      (mini-ros-core/obstacle-avoidance-node 10)
-     (mini-ros-core/logger-node)]))
+
+     ; Sensor nodes - read and publish sensor data, consumed by logic nodes
+     (mini-ros-core/start-line-tracker line-track-sensor line-track/status 100)
+     (mini-ros-core/start-ultrasound ultrasound-sensor ultrasound/measure 100)]))
 
 (defn shutdown!
   "Shuts down the Pi4J context and releases all GPIO resources."

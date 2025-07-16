@@ -16,10 +16,10 @@
 
 (defn create-sensor
   "Create line track sensors"
-  [pi4j {:keys [ldr-pin-l ldr-pin-m ldr-pin-r]}]
-  {:ldr-l (make-track-pin pi4j ldr-pin-l)
-   :ldr-m (make-track-pin pi4j ldr-pin-m)
-   :ldr-r (make-track-pin pi4j ldr-pin-r)})
+  [pi4j {:keys [ldr-left-pin ldr-middle-pin ldr-right-pin]}]
+  {:left (make-track-pin pi4j ldr-left-pin)
+   :middle (make-track-pin pi4j ldr-middle-pin)
+   :right (make-track-pin pi4j ldr-right-pin)})
 
 (defn status [line-track-sensor]
   (into {}
