@@ -1,7 +1,5 @@
 (ns robot.system
   (:require
-   [mini-ros.core :as mini-ros-core]
-   [mini-ros.motor-arbiter :as mini-ros-motor-arbiter]
    [peripherals.motor :as motor]
    [peripherals.ultrasound :as ultrasound]
    [peripherals.servo :as servo]
@@ -23,12 +21,12 @@
 (defonce ultrasound-trig 11)
 (defonce ultrasound-echo 8)
 
-;; Line track BCM pins
-(defonce ldr-left-pin 20)
+;; Line track BCM pins - I may have the sensor in the wrong way around!
+(defonce ldr-left-pin 19)
 (defonce ldr-middle-pin 16)
-(defonce ldr-right-pin 19)
+(defonce ldr-right-pin 20)
 
-(defn create-system
+(defn boot-system
   "Boots the Pi4J context and robot peripherals"
   []
   (let [pi4j (Pi4J/newAutoContext)
@@ -41,21 +39,6 @@
      :motors motors
      :sensors sensors
      :servo servo}))
-
-(defn start-nodes! [system]
-  (let [{:keys [motors sensors _servo]} system
-        {:keys [ultrasound-sensor line-track-sensor]} sensors]
-    [; Responder nodes - act upon logic node output, e.g will control motors
-     (mini-ros-motor-arbiter/motor-arbiter-node motors motor/drive! motor/stop-all!)
-     ;(mini-ros-core/logger-node)
-
-     ; Logic nodes - read sensor node data and publish actions, e.g ultrasound
-     (mini-ros-core/line-follow-node)
-     (mini-ros-core/obstacle-avoidance-node 10)
-
-     ; Sensor nodes - read and publish sensor data, consumed by logic nodes
-     (mini-ros-core/start-line-tracker line-track-sensor line-track/status 100)
-     (mini-ros-core/start-ultrasound ultrasound-sensor ultrasound/measure 100)]))
 
 (defn shutdown!
   "Shuts down the Pi4J context and releases all GPIO resources."

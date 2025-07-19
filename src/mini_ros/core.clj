@@ -39,22 +39,45 @@
       (recur))))
 
 (defn line-follow-node []
-  (let [ch (subscribe :line/status)]
+  (let [ch (subscribe :line/status)
+        history (atom '())     ;; FIFO list of last 5 readings
+        max-history 5]
     (go-loop []
       (let [{:keys [payload]} (<! ch)]
-        (cond
-          (:left payload)   (publish! :line/cmd :left)
-          (:middle payload) (publish! :line/cmd :forward)
-          (:right payload)  (publish! :line/cmd :right)
-          :else             (publish! :line/cmd :stop)))
-      (recur))))
+        ;; Update sensor history
+        (swap! history #(->> (conj % payload) (take max-history)))
+
+        ;; Count true values over history
+        (let [recent @history
+              count-true (fn [k] (count (filter #(get % k) recent)))
+              left-c  (count-true :left)
+              mid-c   (count-true :middle)
+              right-c (count-true :right)
+              cmd     (cond
+                        (and (<= mid-c 2) (>= left-c 3)) :left ; we need to come up with the concept of a 'little bit left' as we have both left and middle sensor active
+                        (and (<= mid-c 2) (>= right-c 3)) :right ; we need to come up with the concept of a 'little bit left' as we have both left and middle sensor active
+                        (>= mid-c 3)   :forward
+                        :else          :forward)] ;; fallback to last
+
+          ;; Publish command if changed
+          (publish! :line/cmd cmd)
+          (<! (timeout 100)) ;; turn for only 100th of a second
+          (publish! :line/cmd :stop))
+      (recur)))))
 
 (defn obstacle-avoidance-node [threshold]
   (let [ch (subscribe :ultrasound/distance)]
     (go-loop []
       (let [{:keys [payload]} (<! ch)]
-        (when (< payload threshold)
-          (publish! :avoidance/cmd :stop)))
+        (if (< payload threshold)
+          (do
+            (println "🚧 Obstacle detected — react!")
+            (publish! :avoidance/cmd :backward)
+            (<! (timeout 400)) ;; reverse for 400ms
+            (publish! :avoidance/cmd (rand-nth [:left :right]))
+            (<! (timeout 400)) ;; turn briefly
+            (publish! :avoidance/cmd :stop)) ;; then stop
+          (publish! :avoidance/cmd :forward)))
       (recur))))
 
 (defn logger-node []

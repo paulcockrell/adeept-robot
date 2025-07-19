@@ -82,15 +82,21 @@
   [{:keys [left-motor right-motor]} dir]
   (case dir
     :forward (do (set-direction! left-motor true)
-                 (set-direction! right-motor true))
+                 (set-direction! right-motor true)
+                 (set-speed! left-motor 1.0)
+                 (set-speed! right-motor 1.0))
     :backward (do (set-direction! left-motor false)
-                  (set-direction! right-motor false))
+                  (set-direction! right-motor false)
+                  (set-speed! left-motor 1.0)
+                  (set-speed! right-motor 1.0))
     :left (do (set-direction! left-motor false)
-              (set-direction! right-motor true))
+              (set-direction! right-motor true)
+              (set-speed! left-motor 0.9)
+              (set-speed! right-motor 0.9))
     :right (do (set-direction! left-motor true)
-               (set-direction! right-motor false)))
-  (set-speed! left-motor 0.8)
-  (set-speed! right-motor 0.8))
+               (set-direction! right-motor false)
+               (set-speed! left-motor 0.9)
+               (set-speed! right-motor 0.9))))
 
 (defn stop-all!
   "Stops all motors in a collection.
