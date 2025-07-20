@@ -1,8 +1,8 @@
 (ns mini-ros.mode-controller
   (:require
-    [clojure.core.async :refer [<! timeout go-loop alts!]]
-    [mini-ros.core :refer [subscribe publish!]]
-    [clojure.set :as set]))
+   [clojure.core.async :refer [<! timeout go go-loop alts!]]
+   [mini-ros.core :refer [subscribe publish!]]
+   [mini-ros.line-seek :as line-seek]))
 
 (defonce mode (atom :line-track))
 (defonce last-line-seen (atom (System/currentTimeMillis)))
@@ -22,7 +22,7 @@
 
 (defn mode-controller-node []
   (let [line-ch (subscribe :line/status)
-        us-ch (subscribe :ultrasound/measure)]
+        us-ch (subscribe :ultrasound/distance)]
 
     (go-loop []
       (let [[val port] (alts! [line-ch us-ch])]
@@ -40,17 +40,15 @@
                 (do
                   (reset! last-line-seen (System/currentTimeMillis))
                   (publish! :motor/cmd (line-direction status)))
-                (when (> (- (System/currentTimeMillis) @last-line-seen) 1500)
+                (when (> (- (System/currentTimeMillis) @last-line-seen) 1000)
                   (reset! mode :line-seek)
                   (publish! :motor/cmd :stop)))
 
               :line-seek
-              (if (line-seen? status)
-                (do
+              (let [found? (<! (line-seek/line-seek!))]
+                (if found?
                   (reset! mode :line-track)
-                  (reset! last-line-seen (System/currentTimeMillis)))
-                ;; small left/right wiggle pattern
-                (publish! :motor/cmd (rand-nth [:left :right])))
+                  (reset! mode :wander)))
 
               :wander
               (when (line-seen? status)
@@ -65,15 +63,17 @@
           (let [dist (:payload val)]
             (when (and (< dist 15.0)
                        (not= @mode :evade))
+
               ;; 🚧 Enter evade mode
-              (reset! mode :evade)
-              (go-loop []
-                (publish! :motor/cmd :backward)
-                (<! (timeout 400))
-                (publish! :motor/cmd (rand-nth [:left :right]))
-                (<! (timeout 600))
-                ;; Resume prior mode
-                (reset! mode :wander))))))
+              (let [org-mode @mode]
+                (reset! mode :evade)
+                (go
+                  (publish! :motor/cmd :backward)
+                  (<! (timeout 400))
+                  (publish! :motor/cmd (rand-nth [:left :right]))
+                  (<! (timeout 600))
+                  ;; Resume prior mode
+                  (reset! mode org-mode)))))))
 
       (<! (timeout 200)) ;; slight tick delay
       (recur))))
