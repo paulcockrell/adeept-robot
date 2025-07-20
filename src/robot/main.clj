@@ -1,9 +1,13 @@
 (ns robot.main
   (:require
-   [mini-ros.core :refer [start-line-tracker start-ultrasound logger-node]]
-   [mini-ros.mode-controller :refer [mode-controller-node]]
+   [nodes.line-follow :refer [start-line-follow-node]]
+   [nodes.avoidance :refer [start-avoidance-node]]
+   [nodes.wander :refer [start-wander-node]]
+   [mini-ros.motor-arbiter :refer [motor-arbiter-node]]
+   [mini-ros.brain :refer [run-brain]]
    [peripherals.line-track :as line-track]
    [peripherals.ultrasound :as ultrasound]
+   [peripherals.motor :as motor]
    [robot.system :refer [boot-system shutdown!]]))
 
 (defn- add-shutdown-hook! [system]
@@ -15,21 +19,23 @@
 
 (defn ^:exec main [_]
   (let [system (boot-system)
-        line-track-sensor (get-in system [:sensors :line-track-sensor])
-        ultrasound-sensor (get-in system [:sensors :ultrasound-sensor])]
+        line-sensor (get-in system [:sensors :line-track-sensor])
+        ultra-sensor (get-in system [:sensors :ultrasound-sensor])
+        motors (get system :motors)]
     (add-shutdown-hook! system)
 
-    ;; Start sensory producers
-    (start-line-tracker line-track-sensor line-track/status 100)
-    (start-ultrasound ultrasound-sensor ultrasound/measure 10)
+    ;; Start sensor-driven nodes
+    (start-line-node line-sensor)
+    (start-wander-node)
+    (start-avoidance-node ultra-sensor 15)
 
-    ;; Start motor controller
-    (mode-controller-node)
+    ;; Central motor gatekeeper
+    (motor-arbiter-node motors motor/drive! motor/stop-all!)
 
-    ;; Optional: start logger
-    (logger-node)
+    ;; Launch brain
+    (run-brain)
 
-    (println "Robot is live. Press Enter to quit.")
+    (println "Robot is live!")
     (read-line)
-
     (shutdown! system)))
+
