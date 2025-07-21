@@ -17,14 +17,14 @@
 
 (defn ^:exec main [_]
   (let [system (boot-system)
-        line-sensor (get-in system [:sensors :line-track-sensor])
+        ldr-sensor (get-in system [:sensors :ldr-sensor])
         ultra-sensor (get-in system [:sensors :ultrasound-sensor])
         motors (get system :motors)]
     (add-shutdown-hook! system)
 
     ;; Start sensor-driven nodes
     (start-avoidance-node ultra-sensor 15)
-    (start-line-follow-node line-sensor)
+    (start-line-follow-node ldr-sensor)
     (start-wander-node)
 
     ;; Central motor gatekeeper

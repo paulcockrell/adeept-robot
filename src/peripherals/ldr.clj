@@ -1,11 +1,11 @@
-(ns peripherals.line-track
+(ns peripherals.ldr
   (:import
    com.pi4j.io.gpio.digital.DigitalInput
    com.pi4j.io.gpio.digital.PullResistance))
 
-(defn- make-track-pin [pi4j pin]
+(defn- make-ldr-pin [pi4j pin]
   (let [provider (.provider pi4j "pigpio-digital-input")
-        pin-id (str "line-track-" pin)
+        pin-id (str "ldr-" pin)
         config (-> (DigitalInput/newConfigBuilder pi4j)
                    (.id pin-id)
                    (.name pin-id)
@@ -15,13 +15,19 @@
     (.create provider config)))
 
 (defn create-sensor
-  "Create line track sensors"
+  "Create line track ldr sensors"
   [pi4j {:keys [ldr-left-pin ldr-middle-pin ldr-right-pin]}]
-  {:left (make-track-pin pi4j ldr-left-pin)
-   :middle (make-track-pin pi4j ldr-middle-pin)
-   :right (make-track-pin pi4j ldr-right-pin)})
+  {:left (make-ldr-pin pi4j ldr-left-pin)
+   :middle (make-ldr-pin pi4j ldr-middle-pin)
+   :right (make-ldr-pin pi4j ldr-right-pin)})
 
-(defn status [line-track-sensor]
+(defn status [ldr-sensor]
   (into {}
-        (for [[k pin] line-track-sensor]
+        (for [[k pin] ldr-sensor]
           [k (.isHigh pin)])))
+
+(defn found-line? [status] 
+  (some true? (vals status)))
+
+(defn lost-line? [status]
+  (not (found-line? status)))

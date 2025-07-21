@@ -3,7 +3,7 @@
    [peripherals.motor :as motor]
    [peripherals.ultrasound :as ultrasound]
    [peripherals.servo :as servo]
-   [peripherals.line-track :as line-track])
+   [peripherals.ldr :as ldr])
   (:import
    com.pi4j.Pi4J))
 
@@ -33,7 +33,7 @@
         motors {:left-motor (motor/create-motor pi4j "LEFT MOTOR" motor-a-en1 motor-a-in1 motor-a-in2)
                 :right-motor (motor/create-motor pi4j "RIGHT MOTOR" motor-b-en1 motor-b-in1 motor-b-in2)}
         sensors {:ultrasound-sensor (ultrasound/create-sensor pi4j {:trig ultrasound-trig :echo ultrasound-echo})
-                 :line-track-sensor (line-track/create-sensor pi4j {:ldr-left-pin ldr-left-pin :ldr-middle-pin ldr-middle-pin :ldr-right-pin ldr-right-pin})}
+                 :ldr-sensor (ldr/create-sensor pi4j {:ldr-left-pin ldr-left-pin :ldr-middle-pin ldr-middle-pin :ldr-right-pin ldr-right-pin})}
         servo (servo/create-servo pi4j)]
     {:pi4j pi4j
      :motors motors

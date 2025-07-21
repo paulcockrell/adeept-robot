@@ -2,7 +2,7 @@
   (:require [clojure.core.async :refer [<! go-loop timeout]]
             [mini-ros.core :refer [publish!]]
             [mini-ros.motor-arbiter :refer [set-active-source!]]
-            [peripherals.line-track :as line]))
+            [nodes.line-follow :as line-follow]))
 
 (defonce mode (atom :line-follow))
 
@@ -12,8 +12,7 @@
       :line-follow
       (do (set-active-source! :line/cmd)
           (<! (timeout 100))
-            ;; use atom or sub to detect line loss
-          (when (line/lost-line?)
+          (when (line-follow/lost-line?)
             (reset! mode :line-seek))
           (recur))
 
@@ -21,7 +20,7 @@
       (do (set-active-source! :line/cmd)
           (publish! :line/cmd :seek-pattern)
           (<! (timeout 500)) ; allow it to scan
-          (if (line/found-line?)
+          (if (line-follow/found-line?)
             (reset! mode :line-follow)
             (reset! mode :wander))
           (recur))
@@ -29,7 +28,7 @@
       :wander
       (do (set-active-source! :wander/cmd)
           (<! (timeout 1500))
-          (when (line/found-line?)
+          (when (line-follow/found-line?)
             (reset! mode :line-follow))
           (recur))
 
