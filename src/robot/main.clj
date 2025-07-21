@@ -5,8 +5,6 @@
    [nodes.wander :refer [start-wander-node]]
    [mini-ros.motor-arbiter :refer [motor-arbiter-node]]
    [mini-ros.brain :refer [run-brain]]
-   [peripherals.line-track :as line-track]
-   [peripherals.ultrasound :as ultrasound]
    [peripherals.motor :as motor]
    [robot.system :refer [boot-system shutdown!]]))
 
@@ -25,9 +23,9 @@
     (add-shutdown-hook! system)
 
     ;; Start sensor-driven nodes
-    (start-line-node line-sensor)
-    (start-wander-node)
     (start-avoidance-node ultra-sensor 15)
+    (start-line-follow-node line-sensor)
+    (start-wander-node)
 
     ;; Central motor gatekeeper
     (motor-arbiter-node motors motor/drive! motor/stop-all!)
