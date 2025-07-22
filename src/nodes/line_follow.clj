@@ -18,7 +18,7 @@
     (recur)))
 
 (defn lost-line? []
-  (every? false? (val @line-follow-status)))
+  (every? false? (vals @line-follow-status)))
 
 (defn found-line? []
   (not (lost-line?)))

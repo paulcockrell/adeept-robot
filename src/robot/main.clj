@@ -23,7 +23,7 @@
     (add-shutdown-hook! system)
 
     ;; Start sensor-driven nodes
-    (start-avoidance-node ultra-sensor 15)
+    (start-avoidance-node ultra-sensor 10)
     (start-line-follow-node ldr-sensor)
     (start-wander-node)
 

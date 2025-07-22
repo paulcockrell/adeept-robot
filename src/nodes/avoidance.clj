@@ -6,8 +6,8 @@
 (defn start-avoidance-node [sensor threshold]
   (go-loop []
     (let [distance (ultrasound/measure sensor)]
-      (when (< distance threshold)
-        (println "🛑 Detected obstacle")
+      (when (and (>= distance 0) (<= distance threshold))
+        (println "🛑 Detected obstacle" distance)
 
         ;; If we are too close, emit a reactive command
         ;; Could be enhanced with smarter escape sequences
