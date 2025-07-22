@@ -17,7 +17,7 @@
     (<! (timeout 100))
     (recur)))
 
-(defn lost-line? [] 
+(defn lost-line? []
   (every? false? (val @line-follow-status)))
 
 (defn found-line? []

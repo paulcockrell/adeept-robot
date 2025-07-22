@@ -1,5 +1,5 @@
 (ns mini-ros.core
-  (:require [clojure.core.async :as async :refer [chan >!! <! go-loop pub sub timeout]]))
+  (:require [clojure.core.async :as async :refer [chan >!! pub sub]]))
 
 ;; ----------------------------------------------------------------------------
 ;; 🚦 Event Bus: Central channel + pub/sub registry

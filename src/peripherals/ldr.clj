@@ -25,9 +25,3 @@
   (into {}
         (for [[k pin] ldr-sensor]
           [k (.isHigh pin)])))
-
-(defn found-line? [status] 
-  (some true? (vals status)))
-
-(defn lost-line? [status]
-  (not (found-line? status)))

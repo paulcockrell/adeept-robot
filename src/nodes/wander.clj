@@ -8,6 +8,6 @@
   (go-loop []
     (let [dir (rand-nth directions)]
       (publish! :wander/cmd dir))
-    (<! (timeout 800)) ; move a bit before next change
+    (<! (timeout 1000)) ; move a bit before next change
     (recur)))
 

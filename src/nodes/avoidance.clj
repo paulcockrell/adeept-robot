@@ -7,6 +7,8 @@
   (go-loop []
     (let [distance (ultrasound/measure sensor)]
       (when (< distance threshold)
+        (println "🛑 Detected obstacle")
+
         ;; If we are too close, emit a reactive command
         ;; Could be enhanced with smarter escape sequences
         (publish! :avoidance/cmd :backward)

@@ -10,6 +10,8 @@
 (defn motor-arbiter-node [motors drive! stop!]
   (doseq [topic [:line/cmd :avoidance/cmd :wander/cmd]]
     (let [ch (subscribe topic)]
+      (println "📡 Subscribed to topic" topic)
+
       (go-loop []
         (let [{:keys [payload]} (<! ch)]
           (when (= topic @active-source)
