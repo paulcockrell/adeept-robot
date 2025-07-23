@@ -10,15 +10,17 @@
   (go-loop []
     (case @mode
       :line-follow
-      (do (set-active-source! :line/cmd)
+      (do (println "🧠 Line Follow")
+          (set-active-source! :line/cmd)
           (<! (timeout 100))
           (when (line-follow/lost-line?)
             (reset! mode :line-seek))
           (recur))
 
       :line-seek
-      (do (set-active-source! :line/cmd)
-          (publish! :line/cmd :seek-pattern)
+      (do (println "🧠 Line Seek")
+          (set-active-source! :line/cmd)
+          (publish! :line/cmd :forward)
           (<! (timeout 500)) ; allow it to scan
           (if (line-follow/found-line?)
             (reset! mode :line-follow)
@@ -26,14 +28,16 @@
           (recur))
 
       :wander
-      (do (set-active-source! :wander/cmd)
+      (do (println "🧠 Wander")
+          (set-active-source! :wander/cmd)
           (<! (timeout 1500))
           (when (line-follow/found-line?)
             (reset! mode :line-follow))
           (recur))
 
       :avoid
-      (do (set-active-source! :avoidance/cmd)
+      (do (println "🧠 Avoid")
+          (set-active-source! :avoidance/cmd)
           (publish! :avoidance/cmd :avoid)
           (<! (timeout 600))
           (reset! mode :wander)
