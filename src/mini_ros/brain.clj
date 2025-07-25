@@ -29,13 +29,13 @@
           (do
             (println "[Brain Event Loop] Found line. Entering line follow mode")
             (reset! mode :line-follow)
-            (set-active-source! :line/cmd))
+            (set-active-source! :line-found/cmd))
 
           :line-lost
           (do
             (println "[Brain Event Loop] Lost line. Entering line seek mode")
             (reset! mode :line-seek)
-            (set-active-source! :line/cmd))
+            (set-active-source! :line-seek/cmd))
 
           :wander ;; no-op
           nil))

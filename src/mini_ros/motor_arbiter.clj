@@ -7,11 +7,11 @@
 (defn set-active-source! [src]
   (reset! active-source src))
 
-(defn active-source? [src] 
+(defn active-source? [src]
   (= @active-source src))
 
 (defn motor-arbiter-node [motors drive! stop!]
-  (doseq [topic [:line/cmd :avoidance/cmd :wander/cmd]]
+  (doseq [topic [:line-follow/cmd :line-seek/cmd :avoidance/cmd :wander/cmd]]
     (let [ch (subscribe topic)]
       (println "📡 Subscribed to topic" topic)
 
