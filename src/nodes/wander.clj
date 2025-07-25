@@ -3,7 +3,8 @@
             [mini-ros.motor-arbiter :refer [set-active-source! active-source?]]
             [mini-ros.core :refer [publish!]]))
 
-(def directions [:forward :left :right])
+; (def directions [:forward :left :right])
+(def directions [:forward])
 
 (defn start-wander-node []
   (go-loop []

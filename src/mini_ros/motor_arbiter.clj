@@ -18,7 +18,6 @@
       (go-loop []
         (let [{:keys [payload]} (<! ch)]
           (when (= topic @active-source)
-            (println "Accepting topic" topic "receieved payload" payload)
             (if (= payload :stop)
               (stop! motors)
               (drive! motors payload))))

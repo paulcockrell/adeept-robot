@@ -1,5 +1,6 @@
 (ns mini-ros.brain
   (:require [clojure.core.async :refer [<! go-loop timeout]]
+            [nodes.line-follow :as line-follow]
             [mini-ros.motor-arbiter :refer [set-active-source!]]
             [mini-ros.core :refer [publish! subscribe]]))
 

@@ -18,7 +18,7 @@
             (println "🛑 Obstacle detected!" distance "running avoidance pattern")
 
             (reset! avoiding? true)
-            (set-active-source! :avoidance/cmd)
+            (publish! :brain/event :obstacle-detected)
 
             (publish! :avoidance/cmd :backward)
             (<! (timeout 750))
@@ -34,5 +34,5 @@
             (reset! avoiding? false)
             (println "🛑 Obstacle cleared. Avoidance routine complete, handing control back to brain.")
             ;; Allow brain to take back control
-            (set-active-source! :line-seek/cmd))))
+            (publish! :brain/event :obstacle-cleared))))
     (recur)))
