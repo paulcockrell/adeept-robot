@@ -43,7 +43,7 @@
 
       :line-seek
       (do
-        (<! (timeout 100))
+        (<! (timeout 2000))
         (if (line-follow/found-line?)
           (publish! :brain/event :line-found)
           (publish! :brain/event :wander)))
