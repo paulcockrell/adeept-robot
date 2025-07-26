@@ -1,9 +1,8 @@
 (ns mini-ros.brain
   (:require [clojure.core.async :refer [<! go-loop timeout]]
             [nodes.line-follow :as line-follow]
+            [mini-ros.state :refer [mode]]
             [mini-ros.core :refer [publish! subscribe]]))
-
-(defonce mode (atom :wander))
 
 (defn- start-brain-event-loop []
   (let [events (subscribe :brain/event)]
