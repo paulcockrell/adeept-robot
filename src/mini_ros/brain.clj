@@ -4,7 +4,7 @@
             [mini-ros.motor-arbiter :refer [set-active-source!]]
             [mini-ros.core :refer [publish! subscribe]]))
 
-(defonce mode (atom :line-follow))
+(defonce mode (atom :wander))
 
 ;; Command gatekeeper, based on the mode, it will 'open' the gate for specific
 ;; message topics to which the motors arbiter will be only receiving these
@@ -42,6 +42,10 @@
             (set-active-source! :line-seek/cmd))
 
           :wander ;; no-op
+          (do 
+            (println "[Brain Event Loop] Entering wander mode")
+            (reset! mode :wander)
+            (set-active-source! :wander/cmd))
           nil))
       (recur))))
 
@@ -69,8 +73,9 @@
       :wander
       (do
         (<! (timeout 100)) ; maybe we don't need this timeout?
-        (when (line-follow/found-line?)
-          (publish! :brain/event :line-found)))
+        (if (line-follow/found-line?)
+          (publish! :brain/event :line-found)
+          (publish! :brain/event :wander)))
 
       :avoid ;; no-op; avoidance owns its own lifecycle
       nil)

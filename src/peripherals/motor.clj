@@ -74,34 +74,37 @@
   (.state in2 DigitalState/LOW))
 
 (defn drive!
-  "Drives two motors in a specified direction.
-  Parameters:
-  - left-motor: motor map for left side
-  - right-motor: motor map for right side
-  - left-motor-speed: 0.0-1.0
-  - right-motor-speed: 0.0-1.0
-  - dir: keyword (:forward, :backward, :left, :right)"
-  ([motors dir] (drive! motors {:left-motor-speed 1.0 :right-motor-speed 1.0} dir))
-  ([motors speeds dir]
-   (let [{:keys [left-motor right-motor]} motors
-         {:keys [left-motor-speed right-motor-speed]} speeds]
-     (case dir
-       :forward (do (set-direction! left-motor true)
-                    (set-direction! right-motor true)
-                    (set-speed! left-motor left-motor-speed)
-                    (set-speed! right-motor right-motor-speed))
-       :backward (do (set-direction! left-motor false)
-                     (set-direction! right-motor false)
-                     (set-speed! left-motor left-motor-speed)
-                     (set-speed! right-motor right-motor-speed))
-       :left (do (set-direction! left-motor false)
-                 (set-direction! right-motor true)
-                 (set-speed! left-motor left-motor-speed)
-                 (set-speed! right-motor right-motor-speed))
-       :right (do (set-direction! left-motor true)
-                  (set-direction! right-motor false)
-                  (set-speed! left-motor left-motor-speed)
-                  (set-speed! right-motor right-motor-speed))))))
+  "Drives the robot based on direction and individual motor speeds.
+  Accepts:
+  - motors: {:left-motor m1 :right-motor m2}
+  - cmd:    {:dir :forward/:backward/:left/:right
+             :left-motor-speed n
+             :right-motor-speed n}"
+  [{:keys [left-motor right-motor]}
+   {:keys [dir left-motor-speed right-motor-speed]}]
+  ;; Set motor directions
+  (case dir
+    :forward (do
+               (set-direction! left-motor true)
+               (set-direction! right-motor true))
+    :backward (do
+                (set-direction! left-motor false)
+                (set-direction! right-motor false))
+    :left (do
+            (set-direction! left-motor false)
+            (set-direction! right-motor true))
+    :right (do
+             (set-direction! left-motor true)
+             (set-direction! right-motor false))
+    ;; Default (stop): safe fallback
+    (do
+      (stop-motor! left-motor)
+      (stop-motor! right-motor)))
+
+  ;; Set speeds
+  (set-speed! left-motor (or left-motor-speed 0.0))
+  (set-speed! right-motor (or right-motor-speed 0.0)))
+
 
 (defn stop-all!
   "Stops all motors in a collection.
