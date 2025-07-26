@@ -1,8 +1,8 @@
 (ns nodes.line-follow
-  (:require [clojure.core.async :refer [go-loop timeout <!]]
-            [mini-ros.core :refer [subscribe publish!]]
+  (:require [clojure.core.async :refer [go-loop]]
+            [mini-ros.core :refer [publish!]]
             [mini-ros.motor-arbiter :refer [motor-control-locked?]]
-            [peripherals.line-track :as line-track]))
+            [peripherals.ldr :as ldr]))
 
 (defonce sensor-state (atom {:left false :middle false :right false}))
 
@@ -11,13 +11,13 @@
 
 (defn start-line-follow-node
   "Reads from :line/status and sends motor correction commands if motors are not locked."
-  []
+  [ldr-sensor]
   (go-loop []
     (let [status (ldr/status ldr-sensor)]
       (reset! sensor-state status)
 
       (when (not (motor-control-locked?)) ;; Only drive if motors are free
-        (let [{:keys [left middle right]} payload
+        (let [{:keys [left middle right]} status
               cmd (cond
                     (and middle left)  {:dir :forward :left-motor-speed 0.85 :right-motor-speed 0.95}
                     (and middle right) {:dir :forward :left-motor-speed 0.95 :right-motor-speed 0.85}
@@ -26,5 +26,5 @@
                     middle             {:dir :forward :left-motor-speed 0.85 :right-motor-speed 0.85}
                     :else              :stop)]
           (publish! :line-follow/cmd cmd)))
-    (recur))))
+      (recur))))
 
