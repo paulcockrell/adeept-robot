@@ -14,10 +14,10 @@
   "Reads from :line/status and sends motor correction commands if motors are not locked."
   [ldr-sensor]
   (go-loop []
-    (when (and (not (motor-control-locked?)) (active-mode? :line-follow)) ;; Only drive if motors are free
-      (let [status (ldr/status ldr-sensor)]
-        (reset! sensor-state status)
+    (let [status (ldr/status ldr-sensor)]
+      (reset! sensor-state status)
 
+      (when (and (not (motor-control-locked?)) (active-mode? :line-follow)) ;; Only drive if motors are free
         (let [{:keys [left middle right]} status
               cmd (cond
                     (and middle left)  {:dir :forward :left-motor-speed 0.85 :right-motor-speed 0.95}
@@ -26,5 +26,5 @@
                     right              {:dir :forward :left-motor-speed 1.0 :right-motor-speed 0.7}
                     middle             {:dir :forward :left-motor-speed 0.85 :right-motor-speed 0.85})]
           (publish! :line-follow/cmd cmd))))
-      (recur)))
+    (recur)))
 
