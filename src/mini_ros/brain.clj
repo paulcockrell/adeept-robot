@@ -35,7 +35,6 @@
 
 (defn- start-brain-watchdog-loop []
   (go-loop []
-    (println "[watchdog] in mode" @mode)
     (case @mode
       :line-follow
       (do

@@ -11,6 +11,6 @@
     (when (not (motor-control-locked?)) ;; Only drive if motors are free
       (let [dir (rand-nth directions)]
         (publish! :wander/cmd {:dir dir :left-motor-speed 1.0 :right-motor-speed 1.0}))
-      (<! (timeout 1000))) ; move a bit before next change
+      (<! (timeout 100))) ; move a bit before next change
     (recur)))
 
