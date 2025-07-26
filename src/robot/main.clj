@@ -1,6 +1,7 @@
 (ns robot.main
   (:require
    [nodes.line-follow :refer [start-line-follow-node]]
+   [nodes.line-seek :refer [start-line-seek-node]]
    [nodes.avoidance :refer [start-avoidance-node]]
    [nodes.wander :refer [start-wander-node]]
    [mini-ros.motor-arbiter :refer [motor-arbiter-node]]
@@ -25,6 +26,7 @@
     ;; Start sensor-driven nodes
     (start-avoidance-node ultra-sensor 10)
     (start-line-follow-node ldr-sensor)
+    (start-line-seek-node)
     (start-wander-node)
 
     ;; Central motor gatekeeper

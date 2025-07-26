@@ -102,9 +102,8 @@
       (stop-motor! right-motor)))
 
   ;; Set speeds
-  (set-speed! left-motor (or left-motor-speed 0.0))
-  (set-speed! right-motor (or right-motor-speed 0.0)))
-
+  (set-speed! left-motor (or left-motor-speed 1.0))
+  (set-speed! right-motor (or right-motor-speed 1.0)))
 
 (defn stop-all!
   "Stops all motors in a collection.

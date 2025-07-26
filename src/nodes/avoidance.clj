@@ -26,7 +26,7 @@
 
             ;; Turn left or right
           (println "* Turning")
-          (publish! :avoidance/cmd {:dir (rand-nth [:left :right]) :left-motor-speed 0.8 :right-motor-speed 0.8})
+          (publish! :avoidance/cmd {:dir (rand-nth [:left :right])})
           (<! (timeout 750))
 
             ;; Stop
