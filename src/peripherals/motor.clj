@@ -78,25 +78,30 @@
   Parameters:
   - left-motor: motor map for left side
   - right-motor: motor map for right side
+  - left-motor-speed: 0.0-1.0
+  - right-motor-speed: 0.0-1.0
   - dir: keyword (:forward, :backward, :left, :right)"
-  [{:keys [left-motor right-motor]} dir]
-  (case dir
-    :forward (do (set-direction! left-motor true)
+  ([motors dir] (drive! motors {:left-motor-speed 1.0 :right-motor-speed 1.0} dir))
+  ([motors speeds dir]
+   (let [{:keys [left-motor right-motor]} motors
+         {:keys [left-motor-speed right-motor-speed]} speeds]
+     (case dir
+       :forward (do (set-direction! left-motor true)
+                    (set-direction! right-motor true)
+                    (set-speed! left-motor left-motor-speed)
+                    (set-speed! right-motor right-motor-speed))
+       :backward (do (set-direction! left-motor false)
+                     (set-direction! right-motor false)
+                     (set-speed! left-motor left-motor-speed)
+                     (set-speed! right-motor right-motor-speed))
+       :left (do (set-direction! left-motor false)
                  (set-direction! right-motor true)
-                 (set-speed! left-motor 1.0)
-                 (set-speed! right-motor 1.0))
-    :backward (do (set-direction! left-motor false)
+                 (set-speed! left-motor left-motor-speed)
+                 (set-speed! right-motor right-motor-speed))
+       :right (do (set-direction! left-motor true)
                   (set-direction! right-motor false)
-                  (set-speed! left-motor 1.0)
-                  (set-speed! right-motor 1.0))
-    :left (do (set-direction! left-motor false)
-              (set-direction! right-motor true)
-              (set-speed! left-motor 0.9)
-              (set-speed! right-motor 0.9))
-    :right (do (set-direction! left-motor true)
-               (set-direction! right-motor false)
-               (set-speed! left-motor 0.9)
-               (set-speed! right-motor 0.9))))
+                  (set-speed! left-motor left-motor-speed)
+                  (set-speed! right-motor right-motor-speed))))))
 
 (defn stop-all!
   "Stops all motors in a collection.

@@ -6,6 +6,10 @@
 
 (defonce mode (atom :line-follow))
 
+;; Command gatekeeper, based on the mode, it will 'open' the gate for specific
+;; message topics to which the motors arbiter will be only receiving these
+;; restrictied message payloads. This stops the system sending conflicting
+;; instructions based on all the different sensors readings
 (defn- start-brain-event-loop
   "Listens to :brain/event and transitions modes. This is your event-driven state machine"
   []
@@ -41,6 +45,9 @@
           nil))
       (recur))))
 
+; Centralised sensor reactor. This will set the mode the robot brain operates
+; in based on sensor states. It has no concept of message routing (gatekeeping)
+; just what mode it thinks the robot should be in based on the sensor readings.
 (defn- start-brain-watchdog-loop
   "This watches sensor state in the background and emits events, not motor commands"
   []
@@ -48,20 +55,20 @@
     (case @mode
       :line-follow
       (do
-        (<! (timeout 100))
+        (<! (timeout 100)) ; maybe we don't need this timeout
         (when (line-follow/lost-line?)
           (publish! :brain/event :line-lost)))
 
       :line-seek
       (do
-        (<! (timeout 1500))
+        (<! (timeout 100)) ; maybe we don't need this timeout?
         (if (line-follow/found-line?)
           (publish! :brain/event :line-found)
           (publish! :brain/event :wander)))
 
       :wander
       (do
-        (<! (timeout 1500))
+        (<! (timeout 100)) ; maybe we don't need this timeout?
         (when (line-follow/found-line?)
           (publish! :brain/event :line-found)))
 
