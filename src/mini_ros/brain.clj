@@ -4,7 +4,9 @@
             [mini-ros.state :refer [mode]]
             [mini-ros.core :refer [publish! subscribe]]))
 
-(defn- start-brain-event-loop []
+(defn- start-brain-event-loop
+  "Monitor watchdog events and set robot mode"
+  []
   (let [events (subscribe :brain/event)]
     (go-loop []
       (let [{:keys [payload]} (<! events)]
@@ -32,7 +34,9 @@
           nil))
       (recur))))
 
-(defn- start-brain-watchdog-loop []
+(defn- start-brain-watchdog-loop
+  "Monitor sensor states and publish events"
+  []
   (go-loop []
     (case @mode
       :line-follow

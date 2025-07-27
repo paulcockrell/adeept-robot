@@ -1,5 +1,5 @@
 (ns nodes.line-follow
-  (:require [clojure.core.async :refer [go-loop]]
+  (:require [clojure.core.async :refer [go-loop timeout <!]]
             [mini-ros.core :refer [publish!]]
             [mini-ros.motor-arbiter :refer [motor-control-locked?]]
             [mini-ros.state :refer [active-mode?]]
@@ -25,6 +25,7 @@
                     left               {:dir :forward :left-motor-speed 0.7 :right-motor-speed 1.0}
                     right              {:dir :forward :left-motor-speed 1.0 :right-motor-speed 0.7}
                     middle             {:dir :forward :left-motor-speed 0.85 :right-motor-speed 0.85})]
-          (publish! :line-follow/cmd cmd))))
+          (publish! :line-follow/cmd cmd))
+        (<! (timeout 100))))
     (recur)))
 
