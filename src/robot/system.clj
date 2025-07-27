@@ -43,4 +43,7 @@
 (defn shutdown!
   "Shuts down the Pi4J context and releases all GPIO resources."
   [system]
+  (let [srv (:servo system)]
+    (servo/clean-all! srv))
+
   (.shutdown (:pi4j system)))
