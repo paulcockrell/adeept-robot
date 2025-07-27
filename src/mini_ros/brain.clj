@@ -1,6 +1,7 @@
 (ns mini-ros.brain
   (:require [clojure.core.async :refer [<! go-loop timeout]]
             [nodes.line-follow :as line-follow]
+            [peripherals.neopixel :as neopixel]
             [mini-ros.state :refer [mode]]
             [mini-ros.core :refer [publish! subscribe]]))
 
@@ -41,12 +42,14 @@
     (case @mode
       :line-follow
       (do
+        (neopixel/send-command! "set" 0 0 255) ; blue
         (<! (timeout 100))
         (when (line-follow/lost-line?)
           (publish! :brain/event :line-lost)))
 
       :line-seek
       (do
+        (neopixel/send-command! "set" 255 255 0) ; yellow
         (<! (timeout 2000))
         (if (line-follow/found-line?)
           (publish! :brain/event :line-found)
@@ -54,11 +57,14 @@
 
       :wander
       (do
+        (neopixel/send-command! "set" 0 255 0) ; green
         (<! (timeout 100))
         (when (line-follow/found-line?)
           (publish! :brain/event :line-found)))
 
-      :avoid ;; no-op, avoidance owns its lifecycle
+      :avoid ;; -avoidance owns its lifecycle
+      (neopixel/send-command! "set" 255 0 0) ; red
+
       nil)
 
     (recur)))

@@ -1,7 +1,9 @@
 (ns robot.system
   (:require
+   [mini-ros.state :refer [shutting-down?]]
    [peripherals.motor :as motor]
    [peripherals.ultrasound :as ultrasound]
+   [peripherals.neopixel :as neopixel]
    [peripherals.servo :as servo]
    [peripherals.ldr :as ldr])
   (:import
@@ -43,7 +45,15 @@
 (defn shutdown!
   "Shuts down the Pi4J context and releases all GPIO resources."
   [system]
+  (println "JVM shutting down. Cleaning up robot...")
+
+  (reset! shutting-down? true)
+
+  ; shutdown servos
   (let [srv (:servo system)]
     (servo/clean-all! srv))
+
+  ; shutdown neopixel daemon
+  (neopixel/start-daemon!)
 
   (.shutdown (:pi4j system)))

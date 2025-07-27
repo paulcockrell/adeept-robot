@@ -33,8 +33,8 @@
     (start-line-seek-node)
     (start-wander-node)
 
-    ;; Set lights!
-    (neopixel/send-command! "set" 255 0 0) ; red
+    ;; Start daemons
+    (neopixel/start-daemon!)
 
     ;; Central motor gatekeeper
     (motor-arbiter-node motors motor/drive! motor/stop-all!)

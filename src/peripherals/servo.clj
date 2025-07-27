@@ -63,7 +63,6 @@
   "Takes percentage value and translates and sets the camera angle"
   [i2c percent]
   (let [ang (map-range percent 0 100 min-ang max-ang)]
-    (println "percent" percent "ang:" ang)
     (set-pwm! i2c 0 0 ang)))
 
 (defn create-servo
