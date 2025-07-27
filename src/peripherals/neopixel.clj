@@ -16,10 +16,8 @@
       (println "Started NeoPixel daemon"))))
 
 (defn send-command! [& args]
-  (println "[NeoPixel] send-command!" @led-writer)
   (when-let [writer @led-writer]
     (binding [*out* writer]
-      (println (str/join " " args))
       (flush)))) ; don't close here! keep it open for more commands
 
 (defn stop-daemon! []

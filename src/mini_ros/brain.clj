@@ -50,10 +50,9 @@
       :line-seek
       (do
         (neopixel/send-command! "set" 255 255 0) ; yellow
-        (<! (timeout 2000))
         (if (line-follow/found-line?)
           (publish! :brain/event :line-found)
-          (publish! :brain/event :wander)))
+          (publish! :brain/event :line-seek)))
 
       :wander
       (do

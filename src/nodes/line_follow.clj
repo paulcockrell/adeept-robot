@@ -21,12 +21,13 @@
         (when (and (not (motor-control-locked?)) (active-mode? :line-follow)) ;; Only drive if motors are free
           (let [{:keys [left middle right]} status
                 cmd (cond
-                      (and middle left)  {:dir :forward :left-motor-speed 0.85 :right-motor-speed 0.95}
-                      (and middle right) {:dir :forward :left-motor-speed 0.95 :right-motor-speed 0.85}
-                      left               {:dir :forward :left-motor-speed 0.7 :right-motor-speed 1.0}
-                      right              {:dir :forward :left-motor-speed 1.0 :right-motor-speed 0.7}
-                      middle             {:dir :forward :left-motor-speed 0.85 :right-motor-speed 0.85})]
+                      (and middle left)  {:dir :left :left-motor-speed 0.5 :right-motor-speed 0.7}
+                      (and middle right) {:dir :right :left-motor-speed 0.7 :right-motor-speed 0.5}
+                      left               {:dir :left}
+                      right              {:dir :right}
+                      middle             {:dir :forward :left-motor-speed 0.7 :right-motor-speed 0.7}
+                      :else :stop)]
             (publish! :line-follow/cmd cmd))
-          (<! (timeout 100))))
+          (<! (timeout 200))))
       (recur))))
 

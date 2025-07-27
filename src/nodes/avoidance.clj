@@ -19,19 +19,16 @@
           (publish! :brain/event :obstacle-detected)
 
           ;; Reverse slowly
-          (println "* Reversing")
           (publish! :avoidance/cmd {:dir :backward :left-motor-speed 0.8 :right-motor-speed 0.8})
-          (<! (timeout 500))
+          (<! (timeout 800))
 
           ;; Turn left or right
-          (println "* Turning")
           (publish! :avoidance/cmd {:dir (rand-nth [:left :right])})
-          (<! (timeout 750))
+          (<! (timeout 800))
 
           ;; Stop
-          (println "* Stopping")
           (publish! :avoidance/cmd :stop)
-          (<! (timeout 100))
+          (<! (timeout 200))
 
           ;; Allow brain to take back control
           (release-motor-control!)
