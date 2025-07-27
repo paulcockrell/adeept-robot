@@ -8,6 +8,7 @@
    [mini-ros.motor-arbiter :refer [motor-arbiter-node]]
    [mini-ros.brain :refer [run-brain]]
    [peripherals.motor :as motor]
+   [peripherals.neopixel :as neopixel]
    [robot.system :refer [boot-system shutdown!]]))
 
 (defn- add-shutdown-hook! [system]
@@ -31,6 +32,9 @@
     (start-servo-node servo)
     (start-line-seek-node)
     (start-wander-node)
+
+    ;; Set lights!
+    (neopixel/send-command! "set" 255 0 0) ; red
 
     ;; Central motor gatekeeper
     (motor-arbiter-node motors motor/drive! motor/stop-all!)

@@ -31,7 +31,7 @@
       (println "📡 Subscribed to topic" topic)
       (go-loop []
         (let [{:keys [payload]} (<! ch)]
-          (println "Motor Arbiter: topic" topic ", payload" payload ", lock=" @motor-control-lock)
+          ; (println "Motor Arbiter: topic" topic ", payload" payload ", lock=" @motor-control-lock)
 
           (when (or (not (motor-control-locked?))
                     (lock-owned-by? topic))
