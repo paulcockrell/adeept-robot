@@ -1,5 +1,4 @@
-(ns adeept.peripherals.led
-  (:require [clojure.java.shell :refer [sh]])
+(ns peripherals.led
   (:import
    com.pi4j.io.gpio.digital.DigitalOutput
    com.pi4j.io.gpio.digital.DigitalState))

@@ -1,4 +1,4 @@
-(ns adeept.peripherals.servo
+(ns peripherals.servo
   (:require
    [clojure.math :as math])
   (:import
@@ -56,14 +56,13 @@
   "Maps `value` from [in-min, in-max] to [out-min, out-max]. No clamping."
   [value in-min in-max out-min out-max]
   (int (+ out-min (* (/ (- value in-min)
-                   (- in-max in-min))
-                (- out-max out-min)))))
+                        (- in-max in-min))
+                     (- out-max out-min)))))
 
 (defn set-ang!
   "Takes percentage value and translates and sets the camera angle"
   [i2c percent]
   (let [ang (map-range percent 0 100 min-ang max-ang)]
-    (println "percent" percent "ang:" ang)
     (set-pwm! i2c 0 0 ang)))
 
 (defn create-servo

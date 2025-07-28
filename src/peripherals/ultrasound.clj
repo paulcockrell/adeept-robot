@@ -1,4 +1,4 @@
-(ns adeept.peripherals.ultrasound
+(ns peripherals.ultrasound
   (:import
    com.pi4j.io.gpio.digital.DigitalInput
    com.pi4j.io.gpio.digital.DigitalOutput

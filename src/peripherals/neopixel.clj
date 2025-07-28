@@ -1,0 +1,33 @@
+(ns peripherals.neopixel
+  (:require [babashka.process :refer [process]]
+            [clojure.java.io :as io]
+            [clojure.string :as str]))
+
+(defonce led-proc (atom nil))
+(defonce led-writer (atom nil))
+
+(defn start-daemon! []
+  (when-not (and @led-proc @led-writer)
+    (let [proc (process ["python3" "src/peripherals/neopixel_daemon.py"]
+                        {:in :pipe})
+          writer (io/writer (:in proc))]
+      (reset! led-proc proc)
+      (reset! led-writer writer)
+      (println "Started NeoPixel daemon"))))
+
+(defn send-command! [& args]
+  (when-let [writer @led-writer]
+    (binding [*out* writer]
+      (flush)))) ; don't close here! keep it open for more commands
+
+(defn stop-daemon! []
+  (send-command! "set" 0 0 0) ; off
+  (send-command! "exit")
+  (when-let [writer @led-writer]
+    (.close writer) ; 🔒 we close here when we’re done
+    (reset! led-writer nil))
+  (when-let [proc @led-proc]
+    (.waitFor proc)
+    (reset! led-proc nil)
+    (println "Stopped NeoPixel daemon")))
+

@@ -1,4 +1,4 @@
-(ns adeept.peripherals.motor
+(ns peripherals.motor
   (:import
    com.pi4j.io.gpio.digital.DigitalOutput
    com.pi4j.io.gpio.digital.DigitalState
@@ -74,27 +74,41 @@
   (.state in2 DigitalState/LOW))
 
 (defn drive!
-  "Drives two motors in a specified direction.
-  Parameters:
-  - left-motor: motor map for left side
-  - right-motor: motor map for right side
-  - dir: keyword (:forward, :backward, :left, :right)"
-  [left-motor right-motor dir]
+  "Drives the robot based on direction and individual motor speeds.
+  Accepts:
+  - motors: {:left-motor m1 :right-motor m2}
+  - cmd:    {:dir :forward/:backward/:left/:right
+             :left-motor-speed n
+             :right-motor-speed n}"
+  [{:keys [left-motor right-motor]}
+   {:keys [dir left-motor-speed right-motor-speed]}]
+  ;; Set motor directions
   (case dir
-    :forward (do (set-direction! left-motor true)
-                 (set-direction! right-motor true))
-    :backward (do (set-direction! left-motor false)
-                  (set-direction! right-motor false))
-    :left (do (set-direction! left-motor false)
-              (set-direction! right-motor true))
-    :right (do (set-direction! left-motor true)
-               (set-direction! right-motor false)))
-  (set-speed! left-motor 1.0)
-  (set-speed! right-motor 1.0))
+    :forward (do
+               (set-direction! left-motor true)
+               (set-direction! right-motor true))
+    :backward (do
+                (set-direction! left-motor false)
+                (set-direction! right-motor false))
+    :left (do
+            (set-direction! left-motor false)
+            (set-direction! right-motor true))
+    :right (do
+             (set-direction! left-motor true)
+             (set-direction! right-motor false))
+    ;; Default (stop): safe fallback
+    (do
+      (stop-motor! left-motor)
+      (stop-motor! right-motor)))
+
+  ;; Set speeds
+  (set-speed! left-motor (or left-motor-speed 1.0))
+  (set-speed! right-motor (or right-motor-speed 1.0)))
 
 (defn stop-all!
   "Stops all motors in a collection.
   Parameters:
   - motors: sequence of motor maps"
-  [motors]
-  (doseq [m motors] (stop-motor! m)))
+  [{:keys [left-motor right-motor]}]
+  (stop-motor! left-motor)
+  (stop-motor! right-motor))
