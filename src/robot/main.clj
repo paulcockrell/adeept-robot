@@ -9,6 +9,7 @@
    [mini-ros.brain :refer [run-brain]]
    [peripherals.motor :as motor]
    [peripherals.neopixel :as neopixel]
+   [web.server :as web-server]
    [robot.system :refer [boot-system shutdown!]]))
 
 (defn- add-shutdown-hook! [system]
@@ -42,7 +43,11 @@
     ;; Launch brain
     (run-brain)
 
-    (println "Robot is live!")
+    ;; Launch web server
+    (web-server/start)
+
+    (println "Robot is live! Press enter/return to end")
+
     (read-line)
     (shutdown! system)))
 
