@@ -5,7 +5,7 @@
 (defn gen-page-head
   [title]
   [:head
-   [:titile (str "Locations: " title)]
+   [:title (str "Locations: " title)]
    (page/include-css "/css/styles.css")])
 
 (def header-links
