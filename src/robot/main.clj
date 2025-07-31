@@ -49,5 +49,7 @@
     (println "Robot is live! Press enter/return to end")
 
     (read-line)
+
+    (web-server/stop)
     (shutdown! system)))
 

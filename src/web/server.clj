@@ -16,7 +16,6 @@
   (POST "/cmd" [cmd]
     (publish! :remote/cmd (keyword cmd))
     (str "Command sent:" cmd))
-  (route/resource "/")
   (route/not-found "Not found"))
 
 (def app (wrap-defaults #'app-routes site-defaults))
