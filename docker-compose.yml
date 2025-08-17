@@ -1,0 +1,23 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "3000:3000" # backend
+    volumes:
+      - .:/app
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    command: >
+      sh -c "clojure -M -m backend.main"
+
+  frontend:
+    build: .
+    ports:
+      - "3001:3001" # shadow-cljs dev server
+      - "9630:9630" # nREPL (optional)
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: >
+      sh -c "clojure -M:dev"

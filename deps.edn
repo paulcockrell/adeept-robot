@@ -1,28 +1,46 @@
-{:paths ["src"]
+{:paths ["src" "resources"]
 
- :aliases
- {:robot
-  {:exec-fn robot.main/main}}
-
- :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-
+ :deps {;; Core
+        org.clojure/clojure {:mvn/version "1.11.1"}
         org.clojure/core.async {:mvn/version "1.8.741"}
+        org.clojure/tools.logging {:mvn/version "1.3.0"}
 
+        ;; Process (for neopixel scripts)
         babashka/process {:mvn/version "0.6.23"}
 
-        ;; Logging (to avoid SLF4J warnings)
+        ;; Logging
+        org.slf4j/slf4j-api {:mvn/version "2.0.9"}
         org.slf4j/slf4j-simple {:mvn/version "2.0.9"}
+        ch.qos.logback/logback-classic {:mvn/version "1.4.11"}
 
-        ;; Pi4J Core (provides Context etc)
+        ;; Pi4J (hardware)
         com.pi4j/pi4j-core {:mvn/version "2.5.0"}
-
-        ;; Raspberry Pi-specific platform plugin
         com.pi4j/pi4j-plugin-raspberrypi {:mvn/version "2.5.0"}
-
-        ;; linuxfs-i2c
         com.pi4j/pi4j-plugin-linuxfs {:mvn/version "2.5.0"}
+        com.pi4j/pi4j-plugin-pigpio {:mvn/version "2.5.0"}
 
-        ;; PiGPIO plugin for I2C, PWM, GPIO
-        com.pi4j/pi4j-plugin-pigpio {:mvn/version "2.5.0"}}}
+        ;; Web server
+        ring/ring-core {:mvn/version "1.11.0"}
+        ring/ring {:mvn/version "1.9.6"}
+        ring-cors/ring-cors {:mvn/version "0.1.13"}
+        ring/ring-defaults {:mvn/version "0.3.4"}
+        compojure/compojure {:mvn/version "1.7.0"}
+        http-kit/http-kit {:mvn/version "2.6.0"}
+        com.taoensso/sente {:mvn/version "1.20.0"}
+        hiccup/hiccup {:mvn/version "1.0.5"}
 
+        ;; Frontend
+        reagent/reagent {:mvn/version "1.2.0"}
+        re-frame/re-frame {:mvn/version "1.4.3"}
+        metosin/reitit-frontend {:mvn/version "0.9.1"}}
 
+ :aliases
+ {:repl {:extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
+                      cider/cider-nrepl {:mvn/version "0.45.0"}}
+         :main-opts ["-m" "nrepl.cmdline"
+                     "--middleware" "[cider.nrepl/cider-middleware]"]}
+
+  :dev {:extra-deps {thheller/shadow-cljs {:mvn/version "2.26.2"}}
+        :main-opts ["-m" "shadow.cljs.devtools.cli" "watch" "frontend"]}
+
+  :app {:exec-fn main/-main}}}

@@ -18,7 +18,7 @@
                (println "JVM shutting down, cleaning up robot...")
                (shutdown! system)))))
 
-(defn ^:exec main [_]
+(defn start! []
   (let [system (boot-system)
         ldr-sensor (get-in system [:sensors :ldr-sensor])
         ultra-sensor (get-in system [:sensors :ultrasound-sensor])
@@ -42,7 +42,16 @@
     ;; Launch brain
     (run-brain)
 
-    (println "Robot is live!")
-    (read-line)
-    (shutdown! system)))
+    (println "🤖 Robot brain started.")
+    system))
 
+(defn stop! [system]
+  (println "🛑 Stopping robot...")
+  (shutdown! system))
+
+;; Call this entrypoint for direct running via alias. Blocks on read-line
+(defn ^:exec main [_]
+  (let [system (start!)]
+    (println "Press ENTER to shutdown robot.")
+    (read-line)
+    (stop! system)))
