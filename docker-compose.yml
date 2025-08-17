@@ -1,5 +1,5 @@
 services:
-  backend:
+  web-backend:
     build: .
     ports:
       - "3000:3000" # backend
@@ -9,9 +9,9 @@ services:
     tty: true
     stdin_open: true
     command: >
-      sh -c "clojure -M -m backend.main"
+      sh -c "clojure -M:app"
 
-  frontend:
+  web-frontend:
     build: .
     ports:
       - "3001:3001" # shadow-cljs dev server

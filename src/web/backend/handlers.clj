@@ -1,5 +1,5 @@
 (ns web.backend.handlers
-  (:require [backend.socket :as socket]))
+  (:require [web.backend.socket :as socket]))
 
 (defmulti -event-msg-handler :id)
 

@@ -1,14 +1,14 @@
 (ns robot.main
   (:require
-   [nodes.line-follow :refer [start-line-follow-node]]
-   [nodes.line-seek :refer [start-line-seek-node]]
-   [nodes.avoidance :refer [start-avoidance-node]]
-   [nodes.wander :refer [start-wander-node]]
-   [nodes.servo :refer [start-servo-node]]
-   [mini-ros.motor-arbiter :refer [motor-arbiter-node]]
-   [mini-ros.brain :refer [run-brain]]
-   [peripherals.motor :as motor]
-   [peripherals.neopixel :as neopixel]
+   [robot.nodes.line-follow :refer [start-line-follow-node]]
+   [robot.nodes.line-seek :refer [start-line-seek-node]]
+   [robot.nodes.avoidance :refer [start-avoidance-node]]
+   [robot.nodes.wander :refer [start-wander-node]]
+   [robot.nodes.servo :refer [start-servo-node]]
+   [robot.mini-ros.motor-arbiter :refer [motor-arbiter-node]]
+   [robot.mini-ros.brain :refer [run-brain]]
+   [robot.peripherals.motor :as motor]
+   [robot.peripherals.neopixel :as neopixel]
    [robot.system :refer [boot-system shutdown!]]))
 
 (defn- add-shutdown-hook! [system]
