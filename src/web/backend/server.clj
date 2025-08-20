@@ -1,11 +1,15 @@
 (ns web.backend.server
   (:require [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [ring.middleware.resource :refer [wrap-resource]]
+            [ring.middleware.content-type :refer [wrap-content-type]]
             [ring.middleware.cors :refer [wrap-cors]]
             [org.httpkit.server :as http-kit]
             [web.backend.router :as router]))
 
 (def main-ring-handler
   (-> router/ring-routes
+      (wrap-resource "public")
+      (wrap-content-type)
       (wrap-defaults site-defaults)
       (wrap-cors :access-control-allow-origin [#".*"]))) ;; TODO restrict origin
 
