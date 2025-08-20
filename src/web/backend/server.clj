@@ -22,7 +22,7 @@
   (stop!)
   (let [ring-handler (var main-ring-handler)
         [port stop-fn]
-        (let [stop-fn (http-kit/run-server ring-handler {:port port})]
+        (let [stop-fn (http-kit/run-server ring-handler {:port port :host "0.0.0.0"})]
           [(:local-port (meta stop-fn)) (fn [] (stop-fn :timeout 100))])]
     (println "Running at port" port)
     (reset! web-server_ stop-fn)))

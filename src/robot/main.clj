@@ -11,20 +11,12 @@
    [robot.peripherals.neopixel :as neopixel]
    [robot.system :refer [boot-system shutdown!]]))
 
-(defn- add-shutdown-hook! [system]
-  (.addShutdownHook
-   (Runtime/getRuntime)
-   (Thread. #(do
-               (println "JVM shutting down, cleaning up robot...")
-               (shutdown! system)))))
-
 (defn start! []
   (let [system (boot-system)
         ldr-sensor (get-in system [:sensors :ldr-sensor])
         ultra-sensor (get-in system [:sensors :ultrasound-sensor])
         motors (get system :motors)
         servo (get system :servo)]
-    (add-shutdown-hook! system)
 
     ;; Start sensor-driven nodes
     (start-avoidance-node ultra-sensor 10)

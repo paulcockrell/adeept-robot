@@ -74,4 +74,7 @@
 
 (defn clean-all! [i2c]
   (doseq [ch (range 16)]
-    (set-pwm! i2c ch 0 0)))
+    (try
+      (set-pwm! i2c ch 0 0)
+    (catch java.io.IOException e
+      (println "Servo already closed")))))

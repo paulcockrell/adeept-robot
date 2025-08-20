@@ -24,4 +24,5 @@
 (defn ^:exec -main [_]
   (start!)
   (println "Press ENTER to shutdown robot.")
-  (read-line))
+  (read-line)
+  (stop!))
