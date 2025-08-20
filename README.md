@@ -23,7 +23,7 @@ clj -M:frontend-relase
 Now copy the built files to the pi. E.g:
 
 ```bash
-scp -r ./resources user@raspberrypi.local:/path/to/project/resources
+scp -r ./resources user@raspberrypi.local:/path/to/project/
 ```
 
 ## Run
