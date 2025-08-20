@@ -10,13 +10,30 @@ Install pigpio
 sudo apt install pigpiod
 ```
 
-## Run
+## Build
 
-The project is in RnD stages, so at the moment all that can be done is run
-a demo of motor control. This can be run using the following command:
+### Frontend
+
+Build the frontend on a regular well resourced computer (not the PI) as it may not have enough resource to run in development mode.
 
 ```bash
-sudo clojure -X:robot
+clj -M:frontend-relase
+```
+
+Now copy the built files to the pi. E.g:
+
+```bash
+scp -r ./resources user@raspberrypi.local:/path/to/project/resources
+```
+
+## Run
+
+### Web server + robot server (development mode)
+
+This is safe to run on the RaspberryPI
+
+```bash
+sudo clojure -X:server
 ```
 
 ## Logic diagram
