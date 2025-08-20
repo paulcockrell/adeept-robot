@@ -1,5 +1,5 @@
 
-{:source-paths ["src/frontend"]
+{:source-paths ["src/web/frontend"]
  :dependencies [[reagent "1.2.0"]]
  :dev-http {3001 {:root "resources/public"
                   :push-state/index "index.html"}}
