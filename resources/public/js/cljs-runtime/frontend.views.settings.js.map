@@ -1,0 +1,1 @@
+{"version":3,"sources":["frontend/views/settings.cljs"],"mappings":";AAGA,mCAAA,nCAAMA;AAAN,AAAA,wHAAA,mFAAA,mDAAA,pKACGC","names":["frontend.views.settings/settings","frontend.layout.layout/layout"],"sourcesContent":["(ns frontend.views.settings\n  (:require [frontend.layout.layout :as layout]))\n\n(defn settings []\n  [layout/layout\n   [:div \"Settings\"]])\n"]}
