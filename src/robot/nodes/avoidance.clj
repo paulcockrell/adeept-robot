@@ -13,7 +13,7 @@
   (go-loop []
     (when-not @shutting-down?
       (let [distance (ultrasound/measure sensor)]
-        (when (and (not active-mode? :stop) (not @avoiding?) (>= distance 0.0) (<= distance threshold))
+        (when (and (not (active-mode? :stop)) (not @avoiding?) (>= distance 0.0) (<= distance threshold))
           (reset! avoiding? true)
           (lock-motor-control! :avoidance/cmd)
           (publish! :brain/event :obstacle-detected)
