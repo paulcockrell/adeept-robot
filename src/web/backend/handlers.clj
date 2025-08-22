@@ -48,6 +48,12 @@
     (ros/publish! :camera/action action)
     (println "Recieved camera action" action)))
 
+(defmethod -event-msg-handler :command/led-action
+  [{:keys [event id ?data ring-req ?reply-fn send-fn]}]
+  (when-let [action ?data]
+    (ros/publish! :led/action action)
+    (println "Recieved LED action" action)))
+
 (defmethod -event-msg-handler :chsk/ws-ping
   [{:keys [event id ?data ring-req ?reply-fn send-fn]}]
   (println "RCV: " event))
