@@ -1,11 +1,11 @@
 (ns robot.system
   (:require
-   [mini-ros.state :refer [shutting-down?]]
-   [peripherals.motor :as motor]
-   [peripherals.ultrasound :as ultrasound]
-   [peripherals.neopixel :as neopixel]
-   [peripherals.servo :as servo]
-   [peripherals.ldr :as ldr])
+   [robot.mini-ros.state :refer [shutting-down?]]
+   [robot.peripherals.motor :as motor]
+   [robot.peripherals.ultrasound :as ultrasound]
+   [robot.peripherals.neopixel :as neopixel]
+   [robot.peripherals.servo :as servo]
+   [robot.peripherals.ldr :as ldr])
   (:import
    com.pi4j.Pi4J))
 

@@ -1,0 +1,1 @@
+{"version":3,"sources":["web/frontend/views/about.cljs"],"mappings":";AAGA,iCAAA,jCAAMA;AAAN,AAAA,4HAAA,mFAAA,mDAAA,xKACGC","names":["web.frontend.views.about/about","web.frontend.layout.layout/layout"],"sourcesContent":["(ns web.frontend.views.about\n  (:require [web.frontend.layout.layout :as layout]))\n\n(defn about []\n  [layout/layout\n   [:div \"About\"]])\n"]}

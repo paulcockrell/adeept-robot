@@ -1,0 +1,1 @@
+{"version":3,"sources":["frontend/views/mode_auto.cljs"],"mappings":";AAGA,qCAAA,rCAAMA;AAAN,AAAA,wHAAA,mFAAA,mDAAA,pKACGC","names":["frontend.views.mode-auto/mode-auto","frontend.layout.layout/layout"],"sourcesContent":["(ns frontend.views.mode-auto\n  (:require [frontend.layout.layout :as layout]))\n\n(defn mode-auto []\n  [layout/layout\n   [:div \"Automatic mode\"]])\n"]}

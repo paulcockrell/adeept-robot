@@ -1,0 +1,85 @@
+goog.provide('frontend.views.mode_manual');
+frontend.views.mode_manual.on_mount = (function frontend$views$mode_manual$on_mount(){
+cljs.core.println.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2(["Entering manual mode"], 0));
+
+return re_frame.core.dispatch(new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("command","mode-manual","command/mode-manual",1979732390)], null));
+});
+frontend.views.mode_manual.on_dismount = (function frontend$views$mode_manual$on_dismount(){
+return cljs.core.println.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2(["Leaving manual mode"], 0));
+});
+frontend.views.mode_manual.move_button = (function frontend$views$mode_manual$move_button(opts){
+var map__46712 = opts;
+var map__46712__$1 = cljs.core.__destructure_map(map__46712);
+var command = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__46712__$1,new cljs.core.Keyword(null,"command","command",-894540724));
+var icon_name = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__46712__$1,new cljs.core.Keyword(null,"icon-name","icon-name",152456315));
+return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"button","button",1456579943),new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"on-mouse-down","on-mouse-down",1147755470),(function (){
+return re_frame.core.dispatch(command);
+}),new cljs.core.Keyword(null,"on-mouse-up","on-mouse-up",-1340533320),(function (){
+return re_frame.core.dispatch(new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("command","robot-action","command/robot-action",1752178924),new cljs.core.Keyword(null,"stop","stop",-2140911342)], null));
+})], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"span.material-symbols-outlined","span.material-symbols-outlined",-1733704950),icon_name], null)], null);
+});
+frontend.views.mode_manual.camera_button = (function frontend$views$mode_manual$camera_button(opts){
+var map__46719 = opts;
+var map__46719__$1 = cljs.core.__destructure_map(map__46719);
+var command = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__46719__$1,new cljs.core.Keyword(null,"command","command",-894540724));
+var icon_name = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__46719__$1,new cljs.core.Keyword(null,"icon-name","icon-name",152456315));
+return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"button","button",1456579943),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"on-mouse-down","on-mouse-down",1147755470),(function (){
+return re_frame.core.dispatch(command);
+})], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"span.material-symbols-outlined","span.material-symbols-outlined",-1733704950),icon_name], null)], null);
+});
+frontend.views.mode_manual.range_button = (function frontend$views$mode_manual$range_button(opts){
+var map__46721 = opts;
+var map__46721__$1 = cljs.core.__destructure_map(map__46721);
+var name = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__46721__$1,new cljs.core.Keyword(null,"name","name",1843675177));
+var command = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__46721__$1,new cljs.core.Keyword(null,"command","command",-894540724));
+var colour = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__46721__$1,new cljs.core.Keyword(null,"colour","colour",2137094554));
+return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"input","input",556931961),new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null,"name","name",1843675177),name,new cljs.core.Keyword(null,"type","type",1174270348),"range",new cljs.core.Keyword(null,"on-change","on-change",-732046149),(function (el){
+var value = el.target.value;
+return re_frame.core.dispatch(new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [command,new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"colour","colour",2137094554),colour,new cljs.core.Keyword(null,"value","value",305978217),value], null)], null));
+})], null)], null);
+});
+frontend.views.mode_manual.motor_controls = (function frontend$views$mode_manual$motor_controls(){
+return new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.circular-controller.pico-background-yellow-50","div.circular-controller.pico-background-yellow-50",-1869363457),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.top","div.top",154731355),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.move_button,new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("command","robot-action","command/robot-action",1752178924),new cljs.core.Keyword(null,"forward","forward",-557345303)], null),new cljs.core.Keyword(null,"icon-name","icon-name",152456315),"arrow_drop_up"], null)], null)], null),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.middle","div.middle",-194757789),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.move_button,new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("command","robot-action","command/robot-action",1752178924),new cljs.core.Keyword(null,"left","left",-399115937)], null),new cljs.core.Keyword(null,"icon-name","icon-name",152456315),"arrow_left"], null)], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.move_button,new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("command","robot-action","command/robot-action",1752178924),new cljs.core.Keyword(null,"right","right",-452581833)], null),new cljs.core.Keyword(null,"icon-name","icon-name",152456315),"arrow_right"], null)], null)], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.bottom","div.bottom",56172931),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.move_button,new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("command","robot-action","command/robot-action",1752178924),new cljs.core.Keyword(null,"down","down",1565245570)], null),new cljs.core.Keyword(null,"icon-name","icon-name",152456315),"arrow_drop_down"], null)], null)], null)], null);
+});
+frontend.views.mode_manual.camera_controls = (function frontend$views$mode_manual$camera_controls(){
+return new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.circular-controller.pico-background-yellow-50","div.circular-controller.pico-background-yellow-50",-1869363457),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.top","div.top",154731355),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.camera_button,new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("command","camera-action","command/camera-action",-1408665077),new cljs.core.Keyword(null,"up","up",-269712113)], null),new cljs.core.Keyword(null,"icon-name","icon-name",152456315),"arrow_drop_up"], null)], null)], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.middle","div.middle",-194757789),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.camera_button,new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("command","camera-action","command/camera-action",-1408665077),new cljs.core.Keyword(null,"take-photo","take-photo",-4055892)], null),new cljs.core.Keyword(null,"icon-name","icon-name",152456315),"camera"], null)], null)], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.bottom","div.bottom",56172931),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.camera_button,new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("command","camera-action","command/camera-action",-1408665077),new cljs.core.Keyword(null,"down","down",1565245570)], null),new cljs.core.Keyword(null,"icon-name","icon-name",152456315),"arrow_drop_down"], null)], null)], null)], null);
+});
+frontend.views.mode_manual.led_controls = (function frontend$views$mode_manual$led_controls(){
+return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.led-control","div.led-control",-1290131851),new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"fieldset","fieldset",-1949770816),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"label","label",1718410804),"Red",new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.range_button,new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null,"name","name",1843675177),"led-red",new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.Keyword("command","led-action","command/led-action",1519340257),new cljs.core.Keyword(null,"colour","colour",2137094554),new cljs.core.Keyword(null,"red","red",-969428204)], null)], null)], null),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"label","label",1718410804),"Green",new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.range_button,new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null,"name","name",1843675177),"led-green",new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.Keyword("command","led-action","command/led-action",1519340257),new cljs.core.Keyword(null,"colour","colour",2137094554),new cljs.core.Keyword(null,"green","green",-945526839)], null)], null)], null),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"label","label",1718410804),"Blue",new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.range_button,new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null,"name","name",1843675177),"led-blue",new cljs.core.Keyword(null,"command","command",-894540724),new cljs.core.Keyword("command","led-action","command/led-action",1519340257),new cljs.core.Keyword(null,"colour","colour",2137094554),new cljs.core.Keyword(null,"blue","blue",-622100620)], null)], null)], null)], null)], null);
+});
+frontend.views.mode_manual.mode_manual = (function frontend$views$mode_manual$mode_manual(){
+var with_let46732 = reagent.ratom.with_let_values(new cljs.core.Keyword(null,"with-let46732","with-let46732",-2141085081));
+var temp__5808__auto___46737 = reagent.ratom._STAR_ratom_context_STAR_;
+if((temp__5808__auto___46737 == null)){
+} else {
+var c__37373__auto___46738 = temp__5808__auto___46737;
+if((with_let46732.generation === c__37373__auto___46738.ratomGeneration)){
+if(reagent.debug.has_console){
+((reagent.debug.tracking)?reagent.debug.track_console:console).error(["Warning: The same with-let is being used more ","than once in the same reactive context."].join(''));
+} else {
+}
+} else {
+}
+
+(with_let46732.generation = c__37373__auto___46738.ratomGeneration);
+}
+
+var init46733 = (with_let46732.length === (0));
+var _ = ((((init46733) || (cljs.core.not(with_let46732.hasOwnProperty((0))))))?(with_let46732[(0)] = frontend.views.mode_manual.on_mount()):(with_let46732[(0)]));
+var res46734 = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.layout.layout.layout,new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"section.mode-manual","section.mode-manual",-972890553),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"hgroup","hgroup",1128850489),new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.heading-icon","div.heading-icon",2033044216),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"span.material-symbols-outlined","span.material-symbols-outlined",-1733704950),"joystick"], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"h1","h1",-1896887462),"Manual mode"], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"small","small",2133478704),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"p.muted","p.muted",280260596),"Manual mode allows you to directly control the robots movements.\n            It will still avoid collisions automatically."], null)], null)], null)], null),new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.grid","div.grid",736588158),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"article.motor-controls","article.motor-controls",-1428710825),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"header","header",119441134),"Motor controls"], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.body","div.body",-96313067),new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.motor_controls], null)], null)], null),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"article.camera-controls","article.camera-controls",-2005488960),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"header","header",119441134),"Camera controls"], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.body","div.body",-96313067),new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.camera_controls], null)], null)], null),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"article.led-controls","article.led-controls",-35741170),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"header","header",119441134),"LED controls"], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.body","div.body",-96313067),new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [frontend.views.mode_manual.led_controls], null)], null)], null)], null)], null)], null);
+var destroy__37372__auto___46739 = (function (){
+return frontend.views.mode_manual.on_dismount();
+});
+if(reagent.ratom.reactive_QMARK_()){
+if((with_let46732.destroy == null)){
+(with_let46732.destroy = destroy__37372__auto___46739);
+} else {
+}
+} else {
+destroy__37372__auto___46739();
+}
+
+return res46734;
+});
+
+//# sourceMappingURL=frontend.views.mode_manual.js.map
