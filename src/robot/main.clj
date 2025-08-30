@@ -7,8 +7,8 @@
    [robot.nodes.servo :refer [start-servo-node]]
    [robot.mini-ros.motor-arbiter :refer [motor-arbiter-node]]
    [robot.mini-ros.brain :refer [run-brain]]
-   [robot.peripherals.motor :as motor]
    [robot.peripherals.neopixel :as neopixel]
+   [robot.hardware.factory.motor :as motor]
    [robot.system :refer [boot-system shutdown!]]))
 
 (defn start! []
@@ -29,7 +29,7 @@
     (neopixel/start-daemon!)
 
     ;; Central motor gatekeeper
-    (motor-arbiter-node motors motor/drive! motor/stop-all!)
+    (motor-arbiter-node motors motor/drive motor/stop)
 
     ;; Launch brain
     (run-brain)

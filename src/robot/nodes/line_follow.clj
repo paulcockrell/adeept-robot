@@ -18,7 +18,7 @@
       (let [status (ldr/status ldr-sensor)]
         (reset! sensor-state status)
 
-        (when (and (not (motor-control-locked?)) (active-mode? :line-follow)) ;; Only drive if motors are free
+        (when (and (not (motor-control-locked?)) (active-mode? :sentient :line-follow)) ;; Only drive if motors are free
           (let [{:keys [left middle right]} status
                 cmd (cond
                       (and middle left)  {:dir :left :left-motor-speed 0.7 :right-motor-speed 0.8}

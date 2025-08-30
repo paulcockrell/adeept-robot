@@ -7,14 +7,16 @@
 
 (def valid-states
   {:idle #{:stop}
-   :manual #{:stop :forward :backward :left :right}
-   :sentient #{:stop :avoid-obstacle :explore :follow-line}
-   :programmable #{:stop :running-program :paused}})
+   :manual #{:stop :avoid-obstacle :forward :backward :left :right}
+   :sentient #{:stop :avoid-obstacle :wander :follow-line}
+   :programmable #{:stop :avoid-obstacle :running-program :paused}})
 
 (defonce shutting-down? (atom false))
 
-(defn active-mode? [op sub] 
-  (contains? (op @robot-state) sub))
+(defn active-mode?
+  ([sub] (= (:sub-mode @robot-state) sub))
+  ([op sub]
+   (contains? (op @robot-state) sub)))
 
 (defn set-mode! [op sub]
   (if (contains? (valid-states op) sub)

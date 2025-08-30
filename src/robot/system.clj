@@ -1,23 +1,13 @@
 (ns robot.system
   (:require
    [robot.mini-ros.state :refer [shutting-down?]]
-   [robot.peripherals.motor :as motor]
+   [robot.hardware.factory.motor :as motor-factory]
    [robot.peripherals.ultrasound :as ultrasound]
    [robot.peripherals.neopixel :as neopixel]
    [robot.peripherals.servo :as servo]
    [robot.peripherals.ldr :as ldr])
   (:import
    com.pi4j.Pi4J))
-
-;; Left motor BCM pins
-(defonce motor-a-en1 4)
-(defonce motor-a-in1 26)
-(defonce motor-a-in2 21)
-
-;; Right motor BCM pins
-(defonce motor-b-en1 17)
-(defonce motor-b-in1 27)
-(defonce motor-b-in2 18)
 
 ;; Ultrasound BCM pins
 (defonce ultrasound-trig 11)
@@ -32,8 +22,7 @@
   "Boots the Pi4J context and robot peripherals"
   []
   (let [pi4j (Pi4J/newAutoContext)
-        motors {:left-motor (motor/create-motor pi4j "LEFT MOTOR" motor-a-en1 motor-a-in1 motor-a-in2)
-                :right-motor (motor/create-motor pi4j "RIGHT MOTOR" motor-b-en1 motor-b-in1 motor-b-in2)}
+        motors (motor-factory/create pi4j)
         sensors {:ultrasound-sensor (ultrasound/create-sensor pi4j {:trig ultrasound-trig :echo ultrasound-echo})
                  :ldr-sensor (ldr/create-sensor pi4j {:ldr-left-pin ldr-left-pin :ldr-middle-pin ldr-middle-pin :ldr-right-pin ldr-right-pin})}
         servo (servo/create-servo pi4j)]

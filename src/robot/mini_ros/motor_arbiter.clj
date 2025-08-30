@@ -1,5 +1,6 @@
 (ns robot.mini-ros.motor-arbiter
   (:require [clojure.core.async :refer [<! go-loop]]
+            [clojure.set :refer [union]]
             [robot.mini-ros.core :refer [subscribe]]
             [robot.mini-ros.state :refer [robot-state]]))
 
@@ -8,13 +9,13 @@
 ;; ----------------------------------------------------------------------------
 
 (defn motor-control-locked? []
-  (some? (:lock-owner @robot-state))
+  (some? (:lock-owner @robot-state)))
 
 (defn lock-motor-control! [owner]
   (swap! robot-state assoc :lock-owner owner))
 
 (defn release-motor-control! []
-  (swap! robot-state assoc :lock-owner owner))
+  (swap! robot-state assoc :lock-owner nil))
 
 (defn lock-owned-by? [owner]
   (= (:lock-owner @robot-state) owner))
@@ -23,20 +24,20 @@
 ;; 🚦 Motor Arbiter Node
 ;; ----------------------------------------------------------------------------
 
-(def allowed-topics 
+(def allowed-topics
   {:manual #{:web/manual}
    :sentient #{:line-follow/cmd :line-seek/cmd :avoidance/cmd :wander/cmd}
    :programmable #{:program/cmd}
-   :idle #{})
+   :idle #{}})
 
 (defn motor-arbiter-node
   [motors drive! stop!]
-  (doseq [topic (apply clojure.set/union (vals allowed-topics))]
+  (doseq [topic (apply union (vals allowed-topics))]
     (let [ch (subscribe topic)]
       (println "📡 Subscribed to topic" topic)
       (go-loop []
         (let [{:keys [payload]} (<! ch)
-              {:keys [operating-mode lock-owner]} @robot-state]
+              {:keys [operating-mode]} @robot-state]
 
           ; (println "Motor Arbiter: topic" topic ", payload" payload ", lock=" @motor-control-lock)
 
@@ -44,13 +45,13 @@
           (when (contains? (allowed-topics operating-mode) topic)
 
             ;; Lock check
-            (when (or (nil? lock-owner)
-                      (= lock-owner topic))
+            (when (or (not (motor-control-locked?))
+                      (lock-owned-by? topic))
               (if (= (:dir payload) :stop)
                 (do
                   (stop! motors)
-                  (release-motor-control))
-                (do 
+                  (release-motor-control!))
+                (do
                   (lock-motor-control! topic)
                   (drive! motors payload))))))
         (recur)))))
