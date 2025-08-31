@@ -1,4 +1,4 @@
-(ns robot.peripherals.servo
+(ns robot.hardware.pi4j.servo
   (:require
    [clojure.math :as math])
   (:import
@@ -76,5 +76,5 @@
   (doseq [ch (range 16)]
     (try
       (set-pwm! i2c ch 0 0)
-    (catch java.io.IOException e
-      (println "Servo already closed")))))
+      (catch java.io.IOException e
+        (println "Servo already closed")))))

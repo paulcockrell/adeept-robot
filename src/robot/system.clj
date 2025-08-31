@@ -2,29 +2,20 @@
   (:require
    [robot.mini-ros.state :refer [shutting-down?]]
    [robot.hardware.motor :as motor]
-   [robot.peripherals.ultrasound :as ultrasound]
-   [robot.peripherals.neopixel :as neopixel]
-   [robot.peripherals.servo :as servo]
-   [robot.peripherals.ldr :as ldr])
+   [robot.hardware.ldr :as ldr]
+   [robot.hardware.neopixel :as neopixel]
+   [robot.hardware.ultrasound :as ultrasound]
+   [robot.hardware.servo :as servo])
   (:import
    com.pi4j.Pi4J))
-
-;; Ultrasound BCM pins
-(defonce ultrasound-trig 11)
-(defonce ultrasound-echo 8)
-
-;; Line track BCM pins - I may have the sensor in the wrong way around!
-(defonce ldr-left-pin 19)
-(defonce ldr-middle-pin 16)
-(defonce ldr-right-pin 20)
 
 (defn boot-system
   "Boots the Pi4J context and robot peripherals"
   []
   (let [pi4j (Pi4J/newAutoContext)
-        motors (motor/create pi4j)
-        sensors {:ultrasound-sensor (ultrasound/create-sensor pi4j {:trig ultrasound-trig :echo ultrasound-echo})
-                 :ldr-sensor (ldr/create-sensor pi4j {:ldr-left-pin ldr-left-pin :ldr-middle-pin ldr-middle-pin :ldr-right-pin ldr-right-pin})}
+        motors (motor/create-motors pi4j)
+        sensors {:ultrasound-sensor (ultrasound/create-sensor pi4j)
+                 :ldr-sensor (ldr/create-sensor pi4j)}
         servo (servo/create-servo pi4j)]
     {:pi4j pi4j
      :motors motors

@@ -1,4 +1,4 @@
-(ns robot.peripherals.neopixel
+(ns robot.hardware.pi4j.neopixel
   (:require [babashka.process :refer [process]]
             [clojure.java.io :as io]))
 

@@ -15,14 +15,13 @@
 ;; TODO move in to util
 (def ^:private running-on-pi? (System/getenv "IS_RPI"))
 
-(defn create [pi4j]
+(defn create-motors [pi4j]
   (if running-on-pi?
     {:left-motor (motor/create-motor pi4j "LEFT MOTOR" motor-a-en1 motor-a-in1 motor-a-in2)
      :right-motor (motor/create-motor pi4j "RIGHT MOTOR" motor-b-en1 motor-b-in1 motor-b-in2)}
     {:left-motor (mock-motor/create-motor "LEFT MOTOR MOCK")
      :right-motor (mock-motor/create-motor "RIGHT MOTOR MOCK")}))
 
-;; Public API 
 (defn drive [motors cmd]
   (if running-on-pi?
     (motor/drive! motors cmd)
