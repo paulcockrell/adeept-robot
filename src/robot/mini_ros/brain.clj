@@ -2,7 +2,7 @@
   (:require [clojure.core.async :refer [<! go-loop timeout]]
             [robot.nodes.line-follow :as line-follow]
             [robot.hardware.neopixel :as neopixel]
-            [robot.mini-ros.state :refer [mode]]
+            [robot.mini-ros.state :as state]
             [robot.mini-ros.core :refer [publish! subscribe]]))
 
 (defn- start-brain-event-loop
@@ -14,23 +14,23 @@
         (case payload
           :obstacle-detected
           (do (println "[Brain Event Loop] Obstacle detected")
-              (reset! mode :avoid))
+              (state/set-mode! :sentient :avoid))
 
           :obstacle-cleared
           (do (println "[Brain Event Loop] Obstacle cleared")
-              (reset! mode :wander))
+              (state/set-mode! :sentient :wander))
 
           :line-found
           (do (println "[Brain Event Loop] Found line")
-              (reset! mode :line-follow))
+              (state/set-mode! :sentient :line-follow))
 
           :line-lost
           (do (println "[Brain Event Loop] Lost line")
-              (reset! mode :line-seek))
+              (state/set-mode! :sentient :line-seek))
 
           :wander
           (do (println "[Brain Event Loop] Entering wander mode")
-              (reset! mode :wander))
+              (state/set-mode! :sentient :wander))
 
           nil))
       (recur))))
@@ -39,30 +39,32 @@
   "Monitor sensor states and publish events"
   []
   (go-loop []
-    (case @mode
-      :line-follow
+    (case [(state/get-mode) (state/get-sub-mode)]
+      [:sentient :line-follow]
       (do
         (neopixel/send-command! "set" 0 0 255) ; blue
         (<! (timeout 100))
         (when (line-follow/lost-line?)
           (publish! :brain/event :line-lost)))
 
-      :line-seek
+      [:sentient :line-seek]
       (do
         (neopixel/send-command! "set" 255 255 0) ; yellow
         (if (line-follow/found-line?)
           (publish! :brain/event :line-found)
           (publish! :brain/event :line-seek)))
 
-      :wander
+      [:sentient :wander]
       (do
         (neopixel/send-command! "set" 0 255 0) ; green
         (<! (timeout 100))
         (when (line-follow/found-line?)
           (publish! :brain/event :line-found)))
 
-      :avoid ;; -avoidance owns its lifecycle
+      [:sentient :avoid] ;; -avoidance owns its lifecycle
       (neopixel/send-command! "set" 255 0 0) ; red
+
+      :else (println "No match")
 
       nil)
 

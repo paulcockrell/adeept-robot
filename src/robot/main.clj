@@ -8,7 +8,7 @@
    [robot.mini-ros.motor-arbiter :refer [motor-arbiter-node]]
    [robot.mini-ros.brain :refer [run-brain]]
    [robot.hardware.neopixel :as neopixel]
-   [robot.hardware.factory.motor :as motor]
+   [robot.hardware.motor :as motor]
    [robot.system :refer [boot-system shutdown!]]))
 
 (defn start! []

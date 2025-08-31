@@ -13,6 +13,15 @@
 
 (defonce shutting-down? (atom false))
 
+(defn get-mode []
+  (:operating-mode @robot-state))
+
+(defn get-sub-mode []
+  (:sub-mode @robot-state))
+
+(defn get-lock-owner []
+  (:lock-owner @robot-state))
+
 (defn active-mode?
   ([sub] (= (:sub-mode @robot-state) sub))
   ([op sub]

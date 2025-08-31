@@ -1,6 +1,6 @@
 (ns robot.hardware.ultrasound
-  (require [robot.hardware.pi4j.ultrasound :as ultrasound]
-           [robot.hardware.mock.ultrasound :as mock-ultrasound]))
+  (:require [robot.hardware.pi4j.ultrasound :as ultrasound]
+            [robot.hardware.mock.ultrasound :as mock-ultrasound]))
 
 ;; Ultrasound BCM pins
 (defonce ultrasound-trig 11)
