@@ -12,28 +12,28 @@
   [_]
   (println "Recieved request to put robot in idle mode")
   (let [message {:key :robot/mode-updated :message :idle}]
-    (ros/publish! message)
+    (ros/publish! :manual message)
     (socket/broadcast! message)))
 
 (defmethod -event-msg-handler :command/mode-manual
   [_]
   (println "Recieved request to put robot in manual mode")
   (let [message {:key :robot/mode-updated :message :manual}]
-    (ros/publish! message)
+    (ros/publish! :manual message)
     (socket/broadcast! message)))
 
 (defmethod -event-msg-handler :command/mode-sentient
   [_]
   (println "Recieved request to put robot in sentient mode")
   (let [message {:key :robot/mode-updated :message :sentient}]
-    (ros/publish! message)
+    (ros/publish! :manual message)
     (socket/broadcast! message)))
 
 (defmethod -event-msg-handler :command/mode-programmable
   [_]
   (println "Recieved request to put robot in programmable mode")
   (let [message {:key :robot/mode-updated :message :programmable}]
-    (ros/publish! message)
+    (ros/publish! :manual message)
     (socket/broadcast! message)))
 
 (defmethod -event-msg-handler :command/robot-action

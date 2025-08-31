@@ -25,7 +25,7 @@
       // Decide if we are loading dev assets or production bundle
       const dev = location.port === "3000" || location.port === "3001";
       const script = document.createElement("script");
-      script.src = dev ? "js/dev/main.js" : "js/release/main.js";
+      script.src = dev ? "/js/dev/main.js" : "/js/release/main.js";
       document.body.appendChild(script);
     </script>
   </body>
