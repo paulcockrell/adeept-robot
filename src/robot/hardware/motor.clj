@@ -1,4 +1,4 @@
-(ns robot.hardware.factory.motor
+(ns robot.hardware.motor
   (:require [robot.hardware.pi4j.motor :as motor]
             [robot.hardware.mock.motor :as mock-motor]))
 
@@ -19,8 +19,8 @@
   (if running-on-pi?
     {:left-motor (motor/create-motor pi4j "LEFT MOTOR" motor-a-en1 motor-a-in1 motor-a-in2)
      :right-motor (motor/create-motor pi4j "RIGHT MOTOR" motor-b-en1 motor-b-in1 motor-b-in2)}
-    {:left-motor (mock-motor/create-motor "LEFT MOTOR")
-     :right-motor (mock-motor/create-motor "RIGHT MOTOR")}))
+    {:left-motor (mock-motor/create-motor "LEFT MOTOR MOCK")
+     :right-motor (mock-motor/create-motor "RIGHT MOTOR MOCK")}))
 
 ;; Public API 
 (defn drive [motors cmd]

@@ -1,7 +1,7 @@
 (ns robot.system
   (:require
    [robot.mini-ros.state :refer [shutting-down?]]
-   [robot.hardware.factory.motor :as motor-factory]
+   [robot.hardware.motor :as motor]
    [robot.peripherals.ultrasound :as ultrasound]
    [robot.peripherals.neopixel :as neopixel]
    [robot.peripherals.servo :as servo]
@@ -22,7 +22,7 @@
   "Boots the Pi4J context and robot peripherals"
   []
   (let [pi4j (Pi4J/newAutoContext)
-        motors (motor-factory/create pi4j)
+        motors (motor/create pi4j)
         sensors {:ultrasound-sensor (ultrasound/create-sensor pi4j {:trig ultrasound-trig :echo ultrasound-echo})
                  :ldr-sensor (ldr/create-sensor pi4j {:ldr-left-pin ldr-left-pin :ldr-middle-pin ldr-middle-pin :ldr-right-pin ldr-right-pin})}
         servo (servo/create-servo pi4j)]
