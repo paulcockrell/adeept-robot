@@ -1,10 +1,12 @@
 (ns web.backend.main
   (:require [web.backend.router :as router]
+            [web.backend.env :as env]
             [web.backend.server :as server]))
 
 (defn start! []
-  (router/start!)
-  (server/start! 3000))
+  (let [port (if env/is-rpi? 80 3000)]
+    (router/start!)
+    (server/start! port)))
 
 (defn stop! []
   (router/stop!)

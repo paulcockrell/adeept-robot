@@ -14,5 +14,5 @@ frontend-release:
 
 # Start robot + web server
 server:
-	clojure -X:server
+	$(IS_RPI) clojure -X:server
 
