@@ -7,7 +7,7 @@
    [robot.nodes.servo :refer [start-servo-node]]
    [robot.mini-ros.motor-arbiter :refer [motor-arbiter-node]]
    [robot.mini-ros.brain :refer [run-brain]]
-   [robot.peripherals.neopixel :as neopixel]
+   [robot.hardware.neopixel :as neopixel]
    [robot.hardware.factory.motor :as motor]
    [robot.system :refer [boot-system shutdown!]]))
 

@@ -3,7 +3,7 @@
             [robot.mini-ros.core :refer [publish!]]
             [robot.mini-ros.motor-arbiter :refer [motor-control-locked?]]
             [robot.mini-ros.state :refer [active-mode? shutting-down?]]
-            [robot.peripherals.ldr :as ldr]))
+            [robot.hardware.ldr :as ldr]))
 
 (defonce sensor-state (atom {:left false :middle false :right false}))
 

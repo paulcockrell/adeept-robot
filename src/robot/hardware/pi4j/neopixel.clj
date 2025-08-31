@@ -7,7 +7,7 @@
 
 (defn start-daemon! []
   (when-not (and @led-proc @led-writer)
-    (let [proc (process ["python3" "src/peripherals/neopixel_daemon.py"]
+    (let [proc (process ["python3" "src/robot/hardware/pi4j/neopixel_daemon.py"]
                         {:in :pipe})
           writer (io/writer (:in proc))]
       (reset! led-proc proc)

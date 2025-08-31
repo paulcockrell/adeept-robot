@@ -10,7 +10,7 @@
    com.pi4j.Pi4J))
 
 (defn boot-system
-  "Boots the Pi4J context and robot peripherals"
+  "Boots the Pi4J context and robot hardware"
   []
   (let [pi4j (Pi4J/newAutoContext)
         motors (motor/create-motors pi4j)

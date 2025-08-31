@@ -1,7 +1,7 @@
 (ns robot.nodes.servo
   (:require [clojure.core.async :refer [go-loop timeout <!]]
             [robot.mini-ros.state :refer [shutting-down?]]
-            [robot.peripherals.servo :as servo]))
+            [robot.hardware.servo :as servo]))
 
 (defn rand-range [min max]
   (+ min (* (rand) (- max min))))
