@@ -10,6 +10,32 @@ Install pigpio
 sudo apt install pigpiod
 ```
 
+## Development
+
+You can use Docker or start manually.
+
+### Docker
+
+```bash
+docker-compose up
+```
+
+### Frontend
+
+Starts the frontend watcher for development
+
+```bash
+make frontend-dev
+```
+
+### Server
+
+Starts the robot server and web server
+
+```bash
+make server
+```
+
 ## Build
 
 ### Frontend
@@ -17,7 +43,7 @@ sudo apt install pigpiod
 Build the frontend on a regular well resourced computer (not the PI) as it may not have enough resource to run in development mode.
 
 ```bash
-clj -M:frontend-relase
+make frontend-release
 ```
 
 Now copy the built files to the pi. E.g:
@@ -33,7 +59,7 @@ scp -r ./resources user@raspberrypi.local:/path/to/project/
 This is safe to run on the RaspberryPI
 
 ```bash
-sudo clojure -X:server
+make server
 ```
 
 ## Logic diagram
