@@ -83,7 +83,7 @@
 
           :sentient
           (do (println "[Brain Event Loop] Operating state change detected")
-              (state/set-mode! :sentient :stop))
+              (state/set-mode! :sentient :wander))
 
           :programmable
           (do (println "[Brain Event Loop] Operating state change detected")

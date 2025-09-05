@@ -8,7 +8,7 @@
 (def valid-states
   {:idle #{:stop}
    :manual #{:stop :avoid-obstacle :forward :backward :left :right}
-   :sentient #{:stop :avoid-obstacle :wander :follow-line}
+   :sentient #{:stop :avoid-obstacle :wander :line-follow}
    :programmable #{:stop :avoid-obstacle :running-program :paused}})
 
 (defonce shutting-down? (atom false))
