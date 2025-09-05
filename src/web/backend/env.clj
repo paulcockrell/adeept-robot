@@ -1,4 +1,4 @@
 (ns web.backend.env)
 
 (defonce is-rpi?
-  (= true (System/getenv "IS_RPI")))
+  (Boolean/parseBoolean (System/getenv "IS_RPI")))
