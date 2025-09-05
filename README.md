@@ -46,7 +46,7 @@ Build the frontend on a regular well resourced computer (not the PI) as it may n
 make frontend-release
 ```
 
-Now copy the built files to the pi. E.g:
+Now copy the built files to the pi (or use source control to push code up and down). E.g:
 
 ```bash
 scp -r ./resources user@raspberrypi.local:/path/to/project/
@@ -59,7 +59,7 @@ scp -r ./resources user@raspberrypi.local:/path/to/project/
 This is safe to run on the RaspberryPI
 
 ```bash
-make server
+sudo make server IS_RPI=true
 ```
 
 ## Logic diagram

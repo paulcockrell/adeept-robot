@@ -1,5 +1,7 @@
 .PHONY: repl frontend-dev frontend-release server
 
+IS_RPI ?= false
+
 # Start an nREPL server with CIDER middleware
 repl:
 	clojure -M:repl
@@ -14,5 +16,5 @@ frontend-release:
 
 # Start robot + web server
 server:
-	$(IS_RPI) clojure -X:server
+	env IS_RPI=$(IS_RPI) clojure -X:server
 
