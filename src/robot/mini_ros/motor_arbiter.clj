@@ -26,7 +26,7 @@
 
 (def allowed-topics
   {:manual #{:web/manual}
-   :sentient #{:line-follow/cmd :line-seek/cmd :avoidance/cmd :wander/cmd}
+   :sentient #{:line-follow/cmd :line-seek/cmd :avoidance/cmd :wander/cmd :servo/cmd}
    :programmable #{:program/cmd}
    :idle #{}})
 

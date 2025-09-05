@@ -11,30 +11,30 @@
 (defmethod -event-msg-handler :command/mode-idle
   [_]
   (println "Recieved request to put robot in idle mode")
-  (let [message {:key :robot/mode-updated :message :idle}]
-    (ros/publish! :manual message)
-    (socket/broadcast! message)))
+  (let [key :robot/mode-updated message {:mode :idle}]
+    (ros/publish! key message)
+    (socket/broadcast! key message)))
 
 (defmethod -event-msg-handler :command/mode-manual
   [_]
   (println "Recieved request to put robot in manual mode")
-  (let [message {:key :robot/mode-updated :message :manual}]
-    (ros/publish! :manual message)
-    (socket/broadcast! message)))
+  (let [key :robot/mode-updated message :manual]
+    (ros/publish! key message)
+    (socket/broadcast! key message)))
 
 (defmethod -event-msg-handler :command/mode-sentient
   [_]
   (println "Recieved request to put robot in sentient mode")
-  (let [message {:key :robot/mode-updated :message :sentient}]
-    (ros/publish! :manual message)
-    (socket/broadcast! message)))
+  (let [key :robot/mode-updated message :sentient]
+    (ros/publish! key message)
+    (socket/broadcast! key message)))
 
 (defmethod -event-msg-handler :command/mode-programmable
   [_]
   (println "Recieved request to put robot in programmable mode")
-  (let [message {:key :robot/mode-updated :message :programmable}]
-    (ros/publish! :manual message)
-    (socket/broadcast! message)))
+  (let [key :robot/mode-updated message :programmable]
+    (ros/publish! key message)
+    (socket/broadcast! key message)))
 
 (defmethod -event-msg-handler :command/robot-action
   [{:keys [event id ?data ring-req ?reply-fn send-fn]}]
