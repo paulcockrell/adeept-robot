@@ -39,10 +39,14 @@
         (let [{:keys [payload]} (<! ch)
               {:keys [operating-mode]} @robot-state]
 
-          ; (println "Motor Arbiter: topic" topic ", payload" payload ", lock=" @motor-control-lock)
+          ;; TODO remove debug logging
+          (println "Motor Arbiter: operating mode =" operating-mode)
 
           ;; Mode filter
           (when (contains? (allowed-topics operating-mode) topic)
+
+            ;; TODO remove debug logging
+            (println "topic =" topic " payload =" payload " lock =" (:lock-owner @robot-state))
 
             ;; Lock check
             (when (or (not (motor-control-locked?))

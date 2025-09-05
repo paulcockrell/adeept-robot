@@ -70,6 +70,27 @@
 
     (recur)))
 
+(defn- start-brain-state-mangagement-loop
+  "Monitor and set robot operating mode"
+  []
+  (let [events (subscribe :robot/mode-updated)]
+    (go-loop []
+      (let [{:keys [payload]} (<! events)]
+        (case payload
+          :manual
+          (do (println "[Brain Event Loop] Operating state change detected")
+              (state/set-mode! :manual :stop))
+
+          :sentient
+          (do (println "[Brain Event Loop] Operating state change detected")
+              (state/set-mode! :sentient :stop))
+
+          :programmable
+          (do (println "[Brain Event Loop] Operating state change detected")
+              (state/set-mode! :programmable :stop))))
+      (recur))))
+
 (defn run-brain []
   (start-brain-event-loop)
-  (start-brain-watchdog-loop))
+  (start-brain-watchdog-loop)
+  (start-brain-state-mangagement-loop))
