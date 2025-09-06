@@ -10,4 +10,4 @@
   (router/stop!)
   (server/stop!))
 
-(defn -main [] (start!))
+(defn -main [] (start! 3000))

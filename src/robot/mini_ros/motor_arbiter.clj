@@ -40,7 +40,7 @@
               {:keys [operating-mode]} @robot-state]
 
           ;; TODO remove debug logging
-          (println "Motor Arbiter: operating mode =" operating-mode)
+          ; (println "Motor Arbiter: operating mode =" operating-mode)
 
           ;; Mode filter
           (when (contains? (allowed-topics operating-mode) topic)
