@@ -53,7 +53,7 @@
         (publish! :brain/event :line-found))
 
       [:sentient :avoid]
-      (nil) ; noop - avoidance owns its lifecycle
+      nil ; noop - avoidance owns its lifecycle
 
       :else (println "No match")
 
