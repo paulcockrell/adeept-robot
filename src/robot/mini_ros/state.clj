@@ -1,5 +1,6 @@
 (ns robot.mini-ros.state
-  (:require [robot.hardware.neopixel :as neopixel]))
+  (:require [robot.hardware.neopixel :as neopixel]
+            [clojure.core.match :refer [match]]))
 
 (defonce robot-state
   (atom {:operating-mode :idle  ;; high-level mode
@@ -37,11 +38,15 @@
              :lock-owner nil) ;; auto-release lock on mode change
 
       ;; Change neopixel colour to visually display state of robot
-      (case [op sub]
+      (match [op sub]
         [:sentient :line-follow] (neopixel/send-command! "set" 0 0 255) ; blue
         [:sentient :line-seek] (neopixel/send-command! "set" 255 255 0) ; yellow
         [:sentient :wander] (neopixel/send-command! "set" 0 255 0) ; green
-        [:sentient :avoid] neopixel/send-command! "set" 255 0 0)) ; red
+        [:sentient :avoid] (neopixel/send-command! "set" 255 0 0) ; red
+        [:manual _] (neopixel/send-command! "set" 255 165 0) ; orange
+        [:idle _] (neopixel/send-command! "set" 255 255 255) ; white
+        [:programmable _] (neopixel/send-command! "set" 255 192 203)
+        [_ _] nil))
 
     (throw (ex-info "Invalid state transition"
                     {:operating-mode op :sub-mode sub}))))
