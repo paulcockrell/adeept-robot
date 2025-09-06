@@ -1,7 +1,6 @@
 (ns robot.mini-ros.brain
   (:require [clojure.core.async :refer [<! go-loop timeout]]
             [robot.nodes.line-follow :as line-follow]
-            [robot.hardware.neopixel :as neopixel]
             [robot.mini-ros.state :as state]
             [robot.mini-ros.core :refer [publish! subscribe]]))
 

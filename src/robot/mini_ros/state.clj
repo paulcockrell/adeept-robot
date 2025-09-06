@@ -1,4 +1,5 @@
-(ns robot.mini-ros.state)
+(ns robot.mini-ros.state
+  (:require [robot.hardware.neopixel :as neopixel]))
 
 (defonce robot-state
   (atom {:operating-mode :idle  ;; high-level mode
