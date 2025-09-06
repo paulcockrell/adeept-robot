@@ -1,5 +1,5 @@
 (ns robot.mini-ros.brain
-  (:require [clojure.core.async :refer [<! go-loop timeout]]
+  (:require [clojure.core.async :refer [<! go-loop]]
             [robot.nodes.line-follow :as line-follow]
             [robot.mini-ros.state :as state]
             [robot.mini-ros.core :refer [publish! subscribe]]))
@@ -78,7 +78,9 @@
 
           :programmable
           (do (println "[Brain Event Loop] Operating state change detected")
-              (state/set-mode! :programmable :stop))))
+              (state/set-mode! :programmable :stop))
+
+          :else (println "[Brain Event Loop] Unknown operating state change detected")))
       (recur))))
 
 (defn run-brain []
