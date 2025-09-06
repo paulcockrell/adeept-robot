@@ -18,7 +18,6 @@
       (let [status (ldr/status ldr-sensor)]
         (reset! sensor-state status)
 
-        (println "XXX mode=" (get-mode) ", sub-mode=" (get-sub-mode))
         (when (and (not (motor-control-locked?)) (active-mode? :sentient :line-follow)) ;; Only drive if motors are free
           (let [{:keys [left middle right]} status
                 cmd (cond
