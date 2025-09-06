@@ -27,7 +27,8 @@
 (defn active-mode?
   ([sub] (= (:sub-mode @robot-state) sub))
   ([op sub]
-   (contains? (op @robot-state) sub)))
+   (and (= (:operating-mode @robot-state) op)
+        (= (:sub-mode @robot-state) sub))))
 
 (defn set-mode! [op sub]
   (if (contains? (valid-states op) sub)
