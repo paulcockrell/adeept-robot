@@ -2,7 +2,7 @@
   (:require [clojure.core.async :refer [go-loop timeout <!]]
             [robot.mini-ros.core :refer [publish!]]
             [robot.mini-ros.motor-arbiter :refer [motor-control-locked?]]
-            [robot.mini-ros.state :refer [active-mode? shutting-down?]]
+            [robot.mini-ros.state :refer [active-mode? get-mode get-sub-mode shutting-down?]]
             [robot.hardware.ldr :as ldr]))
 
 (defonce sensor-state (atom {:left false :middle false :right false}))
@@ -18,6 +18,7 @@
       (let [status (ldr/status ldr-sensor)]
         (reset! sensor-state status)
 
+        (println "XXX active-mode=" get-mode get-sub-mode)
         (when (and (not (motor-control-locked?)) (active-mode? :sentient :line-follow)) ;; Only drive if motors are free
           (let [{:keys [left middle right]} status
                 cmd (cond
