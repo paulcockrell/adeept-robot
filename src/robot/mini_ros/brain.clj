@@ -41,28 +41,20 @@
   (go-loop []
     (case [(state/get-mode) (state/get-sub-mode)]
       [:sentient :line-follow]
-      (do
-        (neopixel/send-command! "set" 0 0 255) ; blue
-        (<! (timeout 100))
-        (when (line-follow/lost-line?)
-          (publish! :brain/event :line-lost)))
+      (when (line-follow/lost-line?)
+        (publish! :brain/event :line-lost))
 
       [:sentient :line-seek]
-      (do
-        (neopixel/send-command! "set" 255 255 0) ; yellow
-        (if (line-follow/found-line?)
-          (publish! :brain/event :line-found)
-          (publish! :brain/event :line-seek)))
+      (if (line-follow/found-line?)
+        (publish! :brain/event :line-found)
+        (publish! :brain/event :line-seek))
 
       [:sentient :wander]
-      (do
-        (neopixel/send-command! "set" 0 255 0) ; green
-        (<! (timeout 100))
-        (when (line-follow/found-line?)
-          (publish! :brain/event :line-found)))
+      (when (line-follow/found-line?)
+        (publish! :brain/event :line-found))
 
-      [:sentient :avoid] ;; -avoidance owns its lifecycle
-      (neopixel/send-command! "set" 255 0 0) ; red
+      [:sentient :avoid]
+      (nil) ; noop - avoidance owns its lifecycle
 
       :else (println "No match")
 

@@ -29,9 +29,18 @@
 
 (defn set-mode! [op sub]
   (if (contains? (valid-states op) sub)
-    (swap! robot-state assoc
-           :operating-mode op
-           :sub-mode sub
-           :lock-owner nil) ;; auto-release lock on mode change
+    (do
+      (swap! robot-state assoc
+             :operating-mode op
+             :sub-mode sub
+             :lock-owner nil) ;; auto-release lock on mode change
+
+      ;; Change neopixel colour to visually display state of robot
+      (case [op sub]
+        [:sentient :line-follow] (neopixel/send-command! "set" 0 0 255) ; blue
+        [:sentient :line-seek] (neopixel/send-command! "set" 255 255 0) ; yellow
+        [:sentient :wander] (neopixel/send-command! "set" 0 255 0) ; green
+        [:sentient :avoid] neopixel/send-command! "set" 255 0 0)) ; red
+
     (throw (ex-info "Invalid state transition"
                     {:operating-mode op :sub-mode sub}))))
