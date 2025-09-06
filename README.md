@@ -54,13 +54,20 @@ scp -r ./resources user@raspberrypi.local:/path/to/project/
 
 ## Run
 
-### Web server + robot server (development mode)
+### Web server + robot server
 
-This is safe to run on the RaspberryPI
+This command is used when running the server on the RaspberryPI itself.
 
 ```bash
 sudo make server IS_RPI=true
 ```
+
+### Access RoboWebConsole servered from RaspberyPI
+
+You have to check what IP has been assigned to your RaspberryPI and simply
+access that in a browser from a machine on the same network.
+
+e.g: [http://192.168.1.218](http://192.168.1.218)
 
 ## Logic diagram
 
