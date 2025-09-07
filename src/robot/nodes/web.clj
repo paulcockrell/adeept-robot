@@ -11,8 +11,7 @@
       (let [{:keys [payload]} (<! ch)
             {:keys [operating-mode]} @robot-state]
         (when (= operating-mode :manual)
-          (do
-            (println "Received a manual instruction while in manual mode")
-            (publish! :web/manual payload)))) ; we should filter this data
+          (println "Received a manual instruction while in manual mode. Payload" payload)
+          (publish! :manual/cmd payload))) ; TODO we should filter this data so that only the motor arbiter gets motor commands
       (recur))))
 

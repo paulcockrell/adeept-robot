@@ -86,5 +86,5 @@
 
 (defn run-brain []
   (start-main-event-loop)
-  (start-sentient-watchdog-loop)
-  (start-state-mangagement-loop))
+  (start-state-mangagement-loop)
+  (start-sentient-watchdog-loop))
