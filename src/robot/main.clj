@@ -5,6 +5,7 @@
    [robot.nodes.avoidance :refer [start-avoidance-node]]
    [robot.nodes.wander :refer [start-wander-node]]
    [robot.nodes.servo :refer [start-servo-node]]
+   [robot.nodes.web :refer [start-web-node]]
    [robot.mini-ros.motor-arbiter :refer [motor-arbiter-node]]
    [robot.mini-ros.brain :refer [run-brain]]
    [robot.hardware.neopixel :as neopixel]
@@ -24,6 +25,7 @@
     (start-servo-node servo)
     (start-line-seek-node)
     (start-wander-node)
+    (start-web-node)
 
     ;; Start daemons
     (neopixel/start-daemon!)

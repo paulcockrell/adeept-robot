@@ -67,6 +67,7 @@
   (let [events (subscribe :robot/mode-updated)]
     (go-loop []
       (let [{:keys [payload]} (<! events)]
+        (println "[Brain Event Loop] Received :robot/mode-updated payload=" payload)
         (case payload
           :manual
           (do (println "[Brain Event Loop] Operating state change detected")
