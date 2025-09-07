@@ -89,9 +89,9 @@
    (assoc-in db [:robot :mode] {:mode mode})))
 
 (reg-event-fx
- :command/robot-action
+ :command/motor-action
  (fn [_ [_ action]]
-   (client/send! :command/robot-action action)
+   (client/send! :command/motor-action action)
    {}))
 
 (reg-event-fx

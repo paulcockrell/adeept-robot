@@ -36,22 +36,22 @@
     (ros/publish! key message)
     (socket/broadcast! key message)))
 
-(defmethod -event-msg-handler :command/robot-action
+(defmethod -event-msg-handler :command/motor-action
   [{:keys [event id ?data ring-req ?reply-fn send-fn]}]
   (when-let [action ?data]
-    (ros/publish! :robot/action action)
-    (println "Recieved robot action" action)))
+    (ros/publish! :web/motor-action action)
+    (println "Recieved motor action" action)))
 
 (defmethod -event-msg-handler :command/camera-action
   [{:keys [event id ?data ring-req ?reply-fn send-fn]}]
   (when-let [action ?data]
-    (ros/publish! :camera/action action)
+    (ros/publish! :web/camera-action action)
     (println "Recieved camera action" action)))
 
 (defmethod -event-msg-handler :command/led-action
   [{:keys [event id ?data ring-req ?reply-fn send-fn]}]
   (when-let [action ?data]
-    (ros/publish! :led/action action)
+    (ros/publish! :web/led-action action)
     (println "Recieved LED action" action)))
 
 (defmethod -event-msg-handler :chsk/ws-ping
