@@ -4,8 +4,8 @@
             [robot.mini-ros.state :as state]
             [robot.mini-ros.core :refer [publish! subscribe]]))
 
-(defn- start-brain-event-loop
-  "Monitor watchdog events and set robot mode"
+(defn- start-main-event-loop
+  "Monitor all watchdog events and set next robot mode"
   []
   (let [events (subscribe :brain/event)]
     (go-loop []
@@ -34,7 +34,7 @@
           nil))
       (recur))))
 
-(defn- start-brain-watchdog-loop
+(defn- start-sentient-watchdog-loop
   "Monitor sensor states and publish events"
   []
   (go-loop []
@@ -61,7 +61,7 @@
 
     (recur)))
 
-(defn- start-brain-state-mangagement-loop
+(defn- start-state-mangagement-loop
   "Monitor and set robot operating mode"
   []
   (let [events (subscribe :robot/mode-updated)]
@@ -84,6 +84,6 @@
       (recur))))
 
 (defn run-brain []
-  (start-brain-event-loop)
-  (start-brain-watchdog-loop)
-  (start-brain-state-mangagement-loop))
+  (start-main-event-loop)
+  (start-sentient-watchdog-loop)
+  (start-state-mangagement-loop))
