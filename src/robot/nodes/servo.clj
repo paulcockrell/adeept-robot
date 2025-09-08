@@ -6,7 +6,7 @@
             [robot.hardware.servo :as servo]))
 
 (defn start-servo-node [servo]
-  (let [ch (subscribe :web/camera-action)]
+  (let [ch (subscribe :servo/action)]
     (go-loop []
       (let [{:keys [payload]} (<! ch)]
         (when-not @shutting-down?

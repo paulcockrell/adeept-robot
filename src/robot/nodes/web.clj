@@ -19,8 +19,8 @@
    :web/camera-action
    (fn [payload]
      (case payload
-       :up (publish! :web/camera-action {:inc 20})
-       :down (publish! :web/camera-action {:dec 20})
+       :up (publish! :servo/action {:inc 20})
+       :down (publish! :servo/action {:dec 20})
        (println "[WEB NODE] Unknown camera payload" payload)))
 
    :web/action
