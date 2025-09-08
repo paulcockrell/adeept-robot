@@ -24,12 +24,16 @@
 ;; 🚦 Motor Arbiter Node
 ;; ----------------------------------------------------------------------------
 
+;; TODO Should this be in a general file, will other nodes
+;; like the servo want access to this method?
 (def allowed-topics
   {:manual #{:manual/cmd}
    :sentient #{:line-follow/cmd :line-seek/cmd :avoidance/cmd :wander/cmd :servo/cmd}
    :programmable #{:program/cmd}
    :idle #{}})
 
+;; TODO I think this should be moved to the 'nodes'
+;; namespace.
 (defn motor-arbiter-node
   [motors drive! stop!]
   (doseq [topic (apply union (vals allowed-topics))]
