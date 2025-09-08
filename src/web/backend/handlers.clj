@@ -11,7 +11,7 @@
 (defmethod -event-msg-handler :command/mode-idle
   [_]
   (println "Recieved request to put robot in idle mode")
-  (let [key :robot/mode-updated message {:mode :idle}]
+  (let [key :robot/mode-updated message :idle]
     (ros/publish! key message)
     (socket/broadcast! key message)))
 
