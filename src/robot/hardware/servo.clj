@@ -12,14 +12,14 @@
 
 (defn set-ang!
   "Takes percentage value and translates and sets the camera angle"
-  [i2c percent]
+  [servo percent]
   (if env/is-rpi?
-    (servo/set-ang! i2c percent)
+    (servo/set-ang! servo percent)
     (mock-servo/set-ang! percent)))
 
 (defn clean-all!
   "Shutdown servos"
-  [i2c]
+  [servo]
   (if env/is-rpi?
-    (servo/clean-all! i2c)
+    (servo/clean-all! servo)
     (mock-servo/clean-all!)))
