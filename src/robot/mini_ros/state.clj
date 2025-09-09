@@ -47,6 +47,9 @@
          :sub-mode sub
          :lock-owner nil)) ;; auto-release lock on mode change
 
+;; TODO we need to make a neopixel node, so here we just publish a command to
+;; update the leds
+;;
 ;; Change neopixel colour to visually display state of robot
 (defn- update-neopixel [op sub]
   (match [op sub]
