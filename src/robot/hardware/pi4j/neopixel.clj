@@ -1,5 +1,6 @@
 (ns robot.hardware.pi4j.neopixel
   (:require [babashka.process :refer [process]]
+            [clojure.string :as str]
             [clojure.java.io :as io]))
 
 (defonce led-proc (atom nil))
@@ -16,9 +17,10 @@
 
 (defn send-command! [& args]
   (when-let [writer @led-writer]
-    (println "XXX>>> we have writer! args=" args)
-    (binding [*out* writer]
-      (flush)))) ; don't close here! keep it open for more commands
+    (let [line (str (str/join " " args) "\n")]
+      (.write writer line)
+      (.flush writer)
+      (println ">>> sent:" line)))) ; don't close here! keep it open for more commands
 
 (defn stop-daemon! []
   (send-command! "set" 0 0 0) ; off
