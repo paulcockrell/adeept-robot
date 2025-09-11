@@ -12,7 +12,7 @@
         (when-not @shutting-down?
           (match payload
             {:inc ang} (servo/set-ang! servo (int ang))
-            {:dev ang} (servo/set-ang! servo (int ang))
+            {:dec ang} (servo/set-ang! servo (int ang))
             :else (println "[SERVO NODE] Unknown payload:" payload))))
       (recur))))
 

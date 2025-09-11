@@ -60,4 +60,4 @@
     [:manual _] (neopixel/send-command! "set" 255 165 0) ; orange
     [:idle _] (neopixel/send-command! "set" 255 255 255) ; white
     [:programmable _] (neopixel/send-command! "set" 255 192 203)
-    [_ _] nil))
+    [_ _] (println "Unknown update-neopixel params op=" op ", sub=" sub)))
