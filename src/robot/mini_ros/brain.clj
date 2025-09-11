@@ -81,7 +81,12 @@
           (do (println "[Brain Event Loop] Operating state change detected")
               (state/set-mode! :programmable :stop))
 
-          :else (println "[Brain Event Loop] Unknown operating state change detected")))
+          :idle
+          (do (println "[Brain Event Loop] Operating state change detected")
+              (state/set-mode! :idle :stop))
+
+          ;; default
+          (println "[Brain Event Loop] Unknown operating state change detected")))
       (recur))))
 
 (defn run-brain []
