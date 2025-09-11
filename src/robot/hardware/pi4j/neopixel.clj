@@ -16,6 +16,7 @@
 
 (defn send-command! [& args]
   (when-let [writer @led-writer]
+    (println "XXX>>> we have writer! args=" args)
     (binding [*out* writer]
       (flush)))) ; don't close here! keep it open for more commands
 

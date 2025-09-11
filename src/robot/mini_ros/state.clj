@@ -52,7 +52,6 @@
 ;;
 ;; Change neopixel colour to visually display state of robot
 (defn- update-neopixel [op sub]
-  (println "XXX update-neopixel op=" op ", sub=" sub)
   (match [op sub]
     [:sentient :line-follow] (neopixel/send-command! "set" 0 0 255) ; blue
     [:sentient :line-seek] (neopixel/send-command! "set" 255 255 0) ; yellow
