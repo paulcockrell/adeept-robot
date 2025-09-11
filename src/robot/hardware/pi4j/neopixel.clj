@@ -9,7 +9,9 @@
 (defn start-daemon! []
   (when-not (and @led-proc @led-writer)
     (let [proc (process ["python3" "src/robot/hardware/pi4j/neopixel_daemon.py"]
-                        {:in :pipe})
+                        {:in :pipe
+                         :out :inherit
+                         :err :inherit})
           writer (io/writer (:in proc))]
       (reset! led-proc proc)
       (reset! led-writer writer)
@@ -19,8 +21,7 @@
   (when-let [writer @led-writer]
     (let [line (str (str/join " " args) "\n")]
       (.write writer line)
-      (.flush writer)
-      (println ">>> sent:" line)))) ; don't close here! keep it open for more commands
+      (.flush writer)))) ; don't close here! keep it open for more commands
 
 (defn stop-daemon! []
   (send-command! "set" 0 0 0) ; off

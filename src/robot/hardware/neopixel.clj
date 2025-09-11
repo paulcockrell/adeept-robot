@@ -9,10 +9,9 @@
     (mock-neopixel/start-daemon!)))
 
 (defn send-command! [& args]
-  (println "XXX send-command! args=" args)
   (if env/is-rpi?
-    (neopixel/send-command! args)
-    (mock-neopixel/send-command! args)))
+    (apply neopixel/send-command! args)
+    (apply mock-neopixel/send-command! args)))
 
 (defn stop-daemon! []
   (if env/is-rpi?
