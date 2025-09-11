@@ -21,7 +21,7 @@
    (fn [payload]
      (case payload
        :up (publish! :servo/cmd {:inc 20})
-       :down (publish! :servo/cmd {:dec 20})
+       :down (publish! :servo/cmd {:dec -20})
        (println "[WEB NODE] Unknown camera payload" payload)))
 
    :web/led-action

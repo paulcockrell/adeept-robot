@@ -16,6 +16,8 @@
 (def min-ang 500) ; inverted, i think i put the servo in upside down
 (def max-ang 100)
 
+(defonce angle (atom 250))
+
 (defn calc-prescale [freq]
   (int (math/round (- (/ osc-clock pwm-res freq) 1))))
 
@@ -63,8 +65,8 @@
   "Takes percentage value and translates and sets the camera angle"
   [i2c percent]
   (let [ang (map-range percent 0 100 min-ang max-ang)]
-    (set-pwm! i2c 0 0 ang)
-    ang))
+    (reset! @angle ang)
+    (set-pwm! i2c 0 0 ang)))
 
 (defn create-servo
   "Constructs a servo i2c instance"
