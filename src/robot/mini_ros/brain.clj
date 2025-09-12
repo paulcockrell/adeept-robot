@@ -70,7 +70,6 @@
   (go-loop []
     (case [(state/get-mode) (state/get-sub-mode)]
       [:manual :stop]
-      (publish! :manual/cmd :stop)
 
       :else (println "[Manual Watchdog] No match")
 
@@ -87,7 +86,8 @@
         (println "[Brain Event Loop] Operating state change detected. Payload=" payload)
         (case payload
           :manual
-          (state/set-mode! :manual :stop)
+          (do (state/set-mode! :manual :stop)
+              (publish! :manual/cmd :stop))
 
           :sentient
           (state/set-mode! :sentient :wander)
@@ -96,7 +96,8 @@
           (state/set-mode! :programmable :stop)
 
           :idle
-          (state/set-mode! :idle :stop)
+          (do (state/set-mode! :idle :stop)
+              (publish! :idle/cmd :stop))
 
           ;; default
           (println "[Brain Event Loop] Unknown operating state change detected")))
