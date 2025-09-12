@@ -11,7 +11,7 @@
    (fn [payload]
      (case payload
        :forward (publish! :manual/cmd {:dir :forward :left-motor-speed 1.0 :right-motor-speed 1.0})
-       :backward (publish! :manual/cmd {:dir :backward :left-motor-speed 0.8 :right-motor-speed 0.8})
+       :backward (publish! :manual/cmd {:dir :backward :left-motor-speed 0.9 :right-motor-speed 0.9})
        :left (publish! :manual/cmd {:dir :left})
        :right (publish! :manual/cmd {:dir :right})
        :stop (publish! :manual/cmd :stop)
