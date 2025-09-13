@@ -63,20 +63,6 @@
 
     (recur)))
 
-;; Only required for when it is state switching
-(defn- start-manual-watchdog-loop
-  "Monitor manual states and publish events"
-  []
-  (go-loop []
-    (case [(state/get-mode) (state/get-sub-mode)]
-      [:manual :stop]
-
-      :else (println "[Manual Watchdog] No match")
-
-      nil)
-
-    (recur)))
-
 (defn- start-state-mangagement-loop
   "Monitor and set robot operating mode"
   []
@@ -106,5 +92,4 @@
 (defn run-brain []
   (start-main-event-loop)
   (start-state-mangagement-loop)
-  (start-sentient-watchdog-loop)
-  (start-manual-watchdog-loop))
+  (start-sentient-watchdog-loop))
