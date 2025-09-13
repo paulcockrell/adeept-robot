@@ -10,6 +10,32 @@ Install pigpio
 sudo apt install pigpiod
 ```
 
+## Development
+
+You can use Docker or start manually.
+
+### Docker
+
+```bash
+docker-compose up
+```
+
+### Frontend
+
+Starts the frontend watcher for development
+
+```bash
+make frontend-dev
+```
+
+### Server
+
+Starts the robot server and web server
+
+```bash
+make server
+```
+
 ## Build
 
 ### Frontend
@@ -17,10 +43,10 @@ sudo apt install pigpiod
 Build the frontend on a regular well resourced computer (not the PI) as it may not have enough resource to run in development mode.
 
 ```bash
-clj -M:frontend-relase
+make frontend-release
 ```
 
-Now copy the built files to the pi. E.g:
+Now copy the built files to the pi (or use source control to push code up and down). E.g:
 
 ```bash
 scp -r ./resources user@raspberrypi.local:/path/to/project/
@@ -28,13 +54,20 @@ scp -r ./resources user@raspberrypi.local:/path/to/project/
 
 ## Run
 
-### Web server + robot server (development mode)
+### Web server + robot server
 
-This is safe to run on the RaspberryPI
+This command is used when running the server on the RaspberryPI itself.
 
 ```bash
-sudo clojure -X:server
+sudo make server IS_RPI=true
 ```
+
+### Access RoboWebConsole servered from RaspberyPI
+
+You have to check what IP has been assigned to your RaspberryPI and simply
+access that in a browser from a machine on the same network.
+
+e.g: [http://192.168.1.218](http://192.168.1.218)
 
 ## Logic diagram
 

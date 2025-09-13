@@ -1,4 +1,4 @@
-(ns robot.peripherals.motor
+(ns robot.hardware.pi4j.motor
   (:import
    com.pi4j.io.gpio.digital.DigitalOutput
    com.pi4j.io.gpio.digital.DigitalState

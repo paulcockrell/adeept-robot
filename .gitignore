@@ -8,10 +8,12 @@
 # === ClojureScript build outputs ===
 # /out/
 # /public/js/
-# /resources/public/js/
-# /resources/public/cljs-out/
-# /resources/public/js/main.js
-# /resources/public/js/main.js.map
+
+# Ignore all dev builds 
+/resources/public/js/dev/
+
+# Allow release bundles 
+!/resources/public/js/release/**
 
 # === Shadow CLJS ===
 /.shadow-cljs/

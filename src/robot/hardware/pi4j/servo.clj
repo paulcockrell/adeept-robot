@@ -1,4 +1,4 @@
-(ns robot.peripherals.servo
+(ns robot.hardware.pi4j.servo
   (:require
    [clojure.math :as math])
   (:import
@@ -13,8 +13,10 @@
 (def prescale-reg 0xFE)
 (def led0-on-l 0x06)
 
-(def min-ang 500) ; inverted, i think i put the servo in upside down
-(def max-ang 100)
+(def min-ang 300) ; inverted, i think i put the servo in upside down
+(def max-ang 150)
+
+(defonce angle (atom 120))
 
 (defn calc-prescale [freq]
   (int (math/round (- (/ osc-clock pwm-res freq) 1))))
@@ -63,7 +65,8 @@
   "Takes percentage value and translates and sets the camera angle"
   [i2c percent]
   (let [ang (map-range percent 0 100 min-ang max-ang)]
-    (set-pwm! i2c 0 0 ang)))
+    (reset! angle ang)
+    (set-pwm! i2c 0 0 @angle)))
 
 (defn create-servo
   "Constructs a servo i2c instance"
@@ -76,5 +79,5 @@
   (doseq [ch (range 16)]
     (try
       (set-pwm! i2c ch 0 0)
-    (catch java.io.IOException e
-      (println "Servo already closed")))))
+      (catch java.io.IOException e
+        (println "Servo already closed")))))

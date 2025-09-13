@@ -1,5 +1,6 @@
-(ns robot.peripherals.neopixel
+(ns robot.hardware.pi4j.neopixel
   (:require [babashka.process :refer [process]]
+            [clojure.string :as str]
             [clojure.java.io :as io]))
 
 (defonce led-proc (atom nil))
@@ -7,8 +8,10 @@
 
 (defn start-daemon! []
   (when-not (and @led-proc @led-writer)
-    (let [proc (process ["python3" "src/peripherals/neopixel_daemon.py"]
-                        {:in :pipe})
+    (let [proc (process ["python3" "src/robot/hardware/pi4j/neopixel_daemon.py"]
+                        {:in :pipe
+                         :out :inherit
+                         :err :inherit})
           writer (io/writer (:in proc))]
       (reset! led-proc proc)
       (reset! led-writer writer)
@@ -16,8 +19,9 @@
 
 (defn send-command! [& args]
   (when-let [writer @led-writer]
-    (binding [*out* writer]
-      (flush)))) ; don't close here! keep it open for more commands
+    (let [line (str (str/join " " args) "\n")]
+      (.write writer line)
+      (.flush writer)))) ; don't close here! keep it open for more commands
 
 (defn stop-daemon! []
   (send-command! "set" 0 0 0) ; off

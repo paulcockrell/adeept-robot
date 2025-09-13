@@ -1,11 +1,18 @@
 
 {:source-paths ["src/web/frontend"]
  :dependencies [[reagent "1.2.0"]]
+
  :dev-http {3001 {:root "resources/public"
                   :push-state/index "index.html"}}
  :builds
- {:frontend
+ {:frontend-dev
   {:target :browser
-   :output-dir "resources/public/js"
-   :asset-path "/js"
+   :output-dir "resources/public/js/dev"
+   :asset-path "/js/dev"
+   :modules {:main {:init-fn web.frontend.app/init}}}
+
+  :frontend-release
+  {:target :browser
+   :output-dir "resources/public/js/release"
+   :asset-path "/js/release"
    :modules {:main {:init-fn web.frontend.app/init}}}}}

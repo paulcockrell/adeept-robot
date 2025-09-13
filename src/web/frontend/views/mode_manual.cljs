@@ -14,7 +14,7 @@
   (let [{:keys [command icon-name]} opts]
     [:button
      {:on-mouse-down #(rf/dispatch command)
-      :on-mouse-up #(rf/dispatch [:command/robot-action :stop])}
+      :on-mouse-up #(rf/dispatch [:command/motor-action :stop])}
      [:span.material-symbols-outlined icon-name]]))
 
 (defn camera-button [opts]
@@ -34,15 +34,15 @@
 (defn motor-controls []
   [:div.circular-controller.pico-background-yellow-50
    [:div.top
-    [move-button {:command [:command/robot-action :forward]
+    [move-button {:command [:command/motor-action :forward]
                   :icon-name "arrow_drop_up"}]]
    [:div.middle
-    [move-button {:command [:command/robot-action :left]
+    [move-button {:command [:command/motor-action :left]
                   :icon-name "arrow_left"}]
-    [move-button {:command [:command/robot-action :right]
+    [move-button {:command [:command/motor-action :right]
                   :icon-name "arrow_right"}]]
    [:div.bottom
-    [move-button {:command [:command/robot-action :down]
+    [move-button {:command [:command/motor-action :backward]
                   :icon-name "arrow_drop_down"}]]])
 
 (defn camera-controls []

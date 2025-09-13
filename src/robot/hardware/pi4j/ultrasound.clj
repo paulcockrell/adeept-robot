@@ -1,4 +1,4 @@
-(ns robot.peripherals.ultrasound
+(ns robot.hardware.pi4j.ultrasound
   (:import
    com.pi4j.io.gpio.digital.DigitalInput
    com.pi4j.io.gpio.digital.DigitalOutput

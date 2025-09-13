@@ -11,47 +11,47 @@
 (defmethod -event-msg-handler :command/mode-idle
   [_]
   (println "Recieved request to put robot in idle mode")
-  (let [message {:key :robot/mode-updated :message :idle}]
-    (ros/publish! message)
-    (socket/broadcast! message)))
+  (let [key :robot/mode-updated message :idle]
+    (ros/publish! key message)
+    (socket/broadcast! key message)))
 
 (defmethod -event-msg-handler :command/mode-manual
   [_]
   (println "Recieved request to put robot in manual mode")
-  (let [message {:key :robot/mode-updated :message :manual}]
-    (ros/publish! message)
-    (socket/broadcast! message)))
+  (let [key :robot/mode-updated message :manual]
+    (ros/publish! key message)
+    (socket/broadcast! key message)))
 
 (defmethod -event-msg-handler :command/mode-sentient
   [_]
   (println "Recieved request to put robot in sentient mode")
-  (let [message {:key :robot/mode-updated :message :sentient}]
-    (ros/publish! message)
-    (socket/broadcast! message)))
+  (let [key :robot/mode-updated message :sentient]
+    (ros/publish! key message)
+    (socket/broadcast! key message)))
 
 (defmethod -event-msg-handler :command/mode-programmable
   [_]
   (println "Recieved request to put robot in programmable mode")
-  (let [message {:key :robot/mode-updated :message :programmable}]
-    (ros/publish! message)
-    (socket/broadcast! message)))
+  (let [key :robot/mode-updated message :programmable]
+    (ros/publish! key message)
+    (socket/broadcast! key message)))
 
-(defmethod -event-msg-handler :command/robot-action
+(defmethod -event-msg-handler :command/motor-action
   [{:keys [event id ?data ring-req ?reply-fn send-fn]}]
   (when-let [action ?data]
-    (ros/publish! :robot/action action)
-    (println "Recieved robot action" action)))
+    (ros/publish! :web/motor-action action)
+    (println "Recieved motor action" action)))
 
 (defmethod -event-msg-handler :command/camera-action
   [{:keys [event id ?data ring-req ?reply-fn send-fn]}]
   (when-let [action ?data]
-    (ros/publish! :camera/action action)
+    (ros/publish! :web/camera-action action)
     (println "Recieved camera action" action)))
 
 (defmethod -event-msg-handler :command/led-action
   [{:keys [event id ?data ring-req ?reply-fn send-fn]}]
   (when-let [action ?data]
-    (ros/publish! :led/action action)
+    (ros/publish! :web/led-action action)
     (println "Recieved LED action" action)))
 
 (defmethod -event-msg-handler :chsk/ws-ping

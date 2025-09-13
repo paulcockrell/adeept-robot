@@ -7,7 +7,7 @@
 (defn start-wander-node []
   (go-loop []
     (when-not @shutting-down?
-      (when (and (not (motor-control-locked?)) (active-mode? :wander))
+      (when (and (not (motor-control-locked?)) (active-mode? :sentient :wander))
         (publish! :wander/cmd {:dir :forward :left-motor-speed 1.0 :right-motor-speed 1.0})
         (<! (timeout 100)))
       (recur))))

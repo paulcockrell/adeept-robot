@@ -1,6 +1,6 @@
 (ns robot.nodes.avoidance
   (:require [clojure.core.async :refer [go-loop timeout <!]]
-            [robot.peripherals.ultrasound :as ultrasound]
+            [robot.hardware.ultrasound :as ultrasound]
             [robot.mini-ros.motor-arbiter :refer [lock-motor-control! release-motor-control!]]
             [robot.mini-ros.state :refer [active-mode? shutting-down?]]
             [robot.mini-ros.core :refer [publish!]]))

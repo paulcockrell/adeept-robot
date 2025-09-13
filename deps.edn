@@ -3,6 +3,7 @@
  :deps {;; Core
         org.clojure/clojure {:mvn/version "1.11.1"}
         org.clojure/core.async {:mvn/version "1.8.741"}
+        org.clojure/core.match {:mvn/version "1.1.0"}
         org.clojure/tools.logging {:mvn/version "1.3.0"}
 
         ;; Process (for neopixel scripts)
@@ -42,11 +43,11 @@
 
   ;; Web frontend development alias
   :frontend-dev {:extra-deps {thheller/shadow-cljs {:mvn/version "2.26.2"}}
-                 :main-opts ["-m" "shadow.cljs.devtools.cli" "watch" "frontend"]}
+                 :main-opts ["-m" "shadow.cljs.devtools.cli" "watch" "frontend-dev"]}
 
   ;; Web frontend production build alias
   :frontend-release {:extra-deps {thheller/shadow-cljs {:mvn/version "2.26.2"}}
-                     :main-opts ["-m" "shadow.cljs.devtools.cli" "release" "frontend"]}
+                     :main-opts ["-m" "shadow.cljs.devtools.cli" "release" "frontend-release"]}
 
   ;; Web server + Robot server) alias
   :server {:exec-fn main/-main}}}

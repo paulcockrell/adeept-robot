@@ -1,4 +1,4 @@
-(ns robot.peripherals.ldr
+(ns robot.hardware.pi4j.ldr
   (:import
    com.pi4j.io.gpio.digital.DigitalInput
    com.pi4j.io.gpio.digital.PullResistance))
@@ -21,7 +21,9 @@
    :middle (make-ldr-pin pi4j ldr-middle-pin)
    :right (make-ldr-pin pi4j ldr-right-pin)})
 
-(defn status [ldr-sensor]
+(defn status
+  "Get status of ldr sensors. Returns map of each ldr sensor state"
+  [ldr-sensor]
   (into {}
         (for [[k pin] ldr-sensor]
           [k (.isHigh pin)])))

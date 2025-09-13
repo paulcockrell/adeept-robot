@@ -9,7 +9,7 @@
   []
   (go-loop []
     (when-not @shutting-down?
-      (when (and (not (motor-control-locked?)) (active-mode? :line-seek))
+      (when (and (not (motor-control-locked?)) (active-mode? :sentient :line-seek))
         (publish! :line-follow/cmd {:dir :forward :left-motor-speed 0.9 :right-motor-speed 1.0})
         (<! (timeout 100)))
       (recur))))
