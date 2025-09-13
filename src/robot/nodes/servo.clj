@@ -7,11 +7,13 @@
 
 (defonce percent (atom 0)) ; int 0 to 100
 
-(defn update-percent! [servo new-percent]
-  (let [bounded-new-percent (-> new-percent (max 0) (min 100))]
-    (println "New servo position percentage:" bounded-new-percent)
-    (reset! percent bounded-new-percent)
-    (servo/set-ang! servo bounded-new-percent)))
+(defn clamp [v] (-> v (max 0) (min 100)))
+
+(defn update-percent! [servo target]
+  (let [clamped-target (clamp target)]
+    (println "New servo position percentage:" clamped-target)
+    (reset! percent clamped-target)
+    (servo/set-ang! servo clamped-target)))
 
 (defn start-servo-node [servo]
   (let [ch (subscribe :servo/cmd)]
