@@ -13,10 +13,10 @@
 (def prescale-reg 0xFE)
 (def led0-on-l 0x06)
 
-(def min-ang 500) ; inverted, i think i put the servo in upside down
-(def max-ang 100)
+(def min-ang 300) ; inverted, i think i put the servo in upside down
+(def max-ang 150)
 
-(defonce angle (atom 250))
+(defonce angle (atom 120))
 
 (defn calc-prescale [freq]
   (int (math/round (- (/ osc-clock pwm-res freq) 1))))
