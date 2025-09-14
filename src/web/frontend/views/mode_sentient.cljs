@@ -3,17 +3,47 @@
             [reagent.core :as ra]
             [web.frontend.layout.layout :as layout]))
 
+(def mock-camera-frame-timer (atom nil))
+
 (defn on-mount []
   (println "Entering sentient mode")
-  (rf/dispatch [:command/mode-sentient]))
+  (rf/dispatch [:command/mode-sentient])
+  (reset! mock-camera-frame-timer (js/setInterval #(rf/dispatch [:tick]) 1000)))
 
 (defn on-dismount []
-  (println "Leaving sentient mode"))
+  (println "Leaving sentient mode")
+  (js/clearTimeout @mock-camera-frame-timer)
+  (reset! mock-camera-frame-timer nil))
+
+(rf/reg-event-db
+ :tick
+ (fn [db _]
+   (assoc db :frame-timestamp (js/Date.now))))
+
+(rf/reg-sub
+ :frame-timestamp
+ (fn [db _] (:frame-timestamp db)))
+
+(defn camera-view []
+  (let [ts @(rf/subscribe [:frame-timestamp])]
+    [:img {:src (str "/mock-camera-frame.jpg?t=" ts)
+           :style {:max-width "100%"}}]))
 
 (defn mode-sentient []
   (ra/with-let [_ (on-mount)]
 
     [layout/layout
-     [:div "Sentient mode"]]
+     [:section.mode-manual
+      [:hgroup
+       [:div.heading-icon
+        [:span.material-symbols-outlined "joystick"]
+        [:h1 "Sentient mode"]
+        [:small
+         [:p.muted "Sentient mode lets the Robot expore the world, if it detects a line, it will follow it, if it detects obstacles, it avoids them, otherwise it goes for a nice walk."]]]]
+      [:div.grid
+       [:article.motor-controls
+        [:header "Camera"]
+        [:div.body
+         [camera-view]]]]]]
 
     (finally (on-dismount))))
