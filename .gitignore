@@ -11,6 +11,7 @@
 
 # Ignore all dev builds 
 /resources/public/js/dev/
+/resources/public/mock-camera-frame.jpg
 
 # Allow release bundles 
 !/resources/public/js/release/**
