@@ -4,6 +4,7 @@
    [robot.nodes.line-seek :refer [start-line-seek-node]]
    [robot.nodes.avoidance :refer [start-avoidance-node]]
    [robot.nodes.wander :refer [start-wander-node]]
+   [robot.nodes.camera :refer [start-camera-node]]
    [robot.nodes.servo :refer [start-servo-node]]
    [robot.nodes.web :refer [start-web-node]]
    [robot.mini-ros.motor-arbiter :refer [motor-arbiter-node]]
@@ -25,6 +26,7 @@
     (start-servo-node servo)
     (start-line-seek-node)
     (start-wander-node)
+    (start-camera-node)
     (start-web-node)
 
     ;; Start daemons
