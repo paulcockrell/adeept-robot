@@ -5,8 +5,8 @@
 (defn start-camera-node []
   (go-loop []
     (try
-      (camera/capture-frame! "resources/public/mock-camera-frame.jpg")
+      (camera/capture-frame! "resources/public/camera-frame.jpg")
       (catch Exception e
         (println "[CAMERA] capture failed:" (.getMessage e))))
-    (<! (timeout 1000)) ; 1 frame/sec
+    (<! (timeout 500)) ; 1 frame/sec
     (recur)))

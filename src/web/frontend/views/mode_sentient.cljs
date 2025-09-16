@@ -3,17 +3,17 @@
             [reagent.core :as ra]
             [web.frontend.layout.layout :as layout]))
 
-(def mock-camera-frame-timer (atom nil))
+(def camera-frame-timer (atom nil))
 
 (defn on-mount []
   (println "Entering sentient mode")
   (rf/dispatch [:command/mode-sentient])
-  (reset! mock-camera-frame-timer (js/setInterval #(rf/dispatch [:tick]) 1000)))
+  (reset! camera-frame-timer (js/setInterval #(rf/dispatch [:tick]) 1000)))
 
 (defn on-dismount []
   (println "Leaving sentient mode")
-  (js/clearTimeout @mock-camera-frame-timer)
-  (reset! mock-camera-frame-timer nil))
+  (js/clearTimeout @camera-frame-timer)
+  (reset! camera-frame-timer nil))
 
 (rf/reg-event-db
  :tick
@@ -26,7 +26,7 @@
 
 (defn camera-view []
   (let [ts @(rf/subscribe [:frame-timestamp])]
-    [:img {:src (str "/mock-camera-frame.jpg?t=" ts)
+    [:img {:src (str "/camera-frame.jpg?t=" ts)
            :style {:max-width "100%"}}]))
 
 (defn mode-sentient []
