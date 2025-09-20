@@ -3,8 +3,6 @@
             [robot.hardware.camera :as camera]))
 
 (defn start-camera-node []
-  (camera/create-camera "resources/public/camera-frame.jpg")
-
   (go-loop []
     (try
       (camera/capture-frame!)

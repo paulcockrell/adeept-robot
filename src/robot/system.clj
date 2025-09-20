@@ -5,7 +5,8 @@
    [robot.hardware.ldr :as ldr]
    [robot.hardware.neopixel :as neopixel]
    [robot.hardware.ultrasound :as ultrasound]
-   [robot.hardware.servo :as servo])
+   [robot.hardware.servo :as servo]
+   [robot.hardware.camera :as camera])
   (:import
    com.pi4j.Pi4J))
 
@@ -16,11 +17,13 @@
         motors (motor/create-motors pi4j)
         sensors {:ultrasound-sensor (ultrasound/create-sensor pi4j)
                  :ldr-sensor (ldr/create-sensor pi4j)}
-        servo (servo/create-servo pi4j)]
+        servo (servo/create-servo pi4j)
+        camera (camera/create-camera "resources/public/camera-frame.jpg")]
     {:pi4j pi4j
      :motors motors
      :sensors sensors
-     :servo servo}))
+     :servo servo
+     :camera camera}))
 
 (defn shutdown!
   "Shuts down the Pi4J context and releases all GPIO resources."
@@ -33,7 +36,11 @@
   (let [srv (:servo system)]
     (servo/clean-all! srv))
 
+  ; shutdown camera
+  (let [camera (:camera system)]
+    (camera/shutdown-camera! camera))
+
   ; shutdown neopixel daemon
-  (neopixel/start-daemon!)
+  (neopixel/stop-daemon!)
 
   (.shutdown (:pi4j system)))

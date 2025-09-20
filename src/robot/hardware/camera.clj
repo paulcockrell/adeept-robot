@@ -8,6 +8,11 @@
     (camera/create-camera outfile)
     (mock-camera/create-camera outfile)))
 
+(defn shutdown-camera! [cam]
+  (if env/is-rpi?
+    (camera/shutdown-camera! cam)
+    (mock-camera/shutdown-camera!)))
+
 (defn capture-frame! []
   (if env/is-rpi?
     (camera/capture-frame!)

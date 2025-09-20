@@ -12,19 +12,21 @@
   (reset! ready true))
 
 (defn create-camera [outfile]
-  (let [cap (VideoCapture. 0) ; 0 = default camera
+  (let [video-cap (VideoCapture. 0) ; 0 = default camera
           frame (Mat.)]
-      (when-not (.isOpened cap)
-        (throw (ex-info "Camera could not be opened" {}))
+      (when-not (.isOpened video-cap)
+        (throw (ex-info "Camera could not be opened" {})))
 
       (go-loop []
         (when (and (not @shutting-down?)
                    @ready
-                   (.read cap frame))
+                   (.read video-cap frame))
           (opencv_imgcodecs/imwrite outfile frame)
           (reset! ready false))
         (recur))
+      
+      video-cap))
 
-      ;; Return cleanup function 
-      #(do (.release cap)
-          (println "[CAMERA NODE] stopped")))))
+(defn shutdown-camera! [video-cap]
+  (when video-cap
+    (.release video-cap)))

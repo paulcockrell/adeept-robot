@@ -8,6 +8,8 @@
 (defn create-camera [new-outfile]
   (reset! outfile new-outfile))
 
+(defn shutdown-camera! [] nil)
+
 (defn capture-frame!
   "Copies test_frame.jpg from resources and embeds frame
   number before copying to to outfile"
