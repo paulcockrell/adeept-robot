@@ -7,6 +7,8 @@
            [org.bytedeco.opencv.opencv_core Mat]))
 
 (defonce ready (atom false))
+(defonce video-cap-instance (atom nil))
+(defonce frame-instance (atom nil))
 
 (defn capture-frame! []
   (reset! ready true))
@@ -15,7 +17,13 @@
   (let [video-cap (VideoCapture. 0) ; 0 = default camera
           frame (Mat.)]
       (when-not (.isOpened video-cap)
-        (throw (ex-info "Camera could not be opened" {})))
+        (throw (ex-info "[CAMERA] Camera could not be opened" {})))
+
+      (println "[CAMERA] Created")
+
+      ;; save references so they persist
+      (reset! video-cap-instance video-cap)
+      (reset! frame-instance frame)
 
       (go-loop []
         (when (and (not @shutting-down?)
@@ -23,10 +31,11 @@
                    (.read video-cap frame))
           (opencv_imgcodecs/imwrite outfile frame)
           (reset! ready false))
-        (recur))
-      
-      video-cap))
+        (recur))))
 
-(defn shutdown-camera! [video-cap]
-  (when video-cap
-    (.release video-cap)))
+(defn shutdown-camera! []
+  (when @video-cap-instance
+    (.release @video-cap-instance)
+    (reset video-cap-instance nil)
+    (reset frame-instance nil)
+    (println "[CAMERA] Shutdown"))

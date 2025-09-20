@@ -17,13 +17,12 @@
         motors (motor/create-motors pi4j)
         sensors {:ultrasound-sensor (ultrasound/create-sensor pi4j)
                  :ldr-sensor (ldr/create-sensor pi4j)}
-        servo (servo/create-servo pi4j)
-        camera (camera/create-camera "resources/public/camera-frame.jpg")]
+        servo (servo/create-servo pi4j)]
+        _ (camera/create-camera "resources/public/camera-frame.jpg")]
     {:pi4j pi4j
      :motors motors
      :sensors sensors
-     :servo servo
-     :camera camera}))
+     :servo servo}))
 
 (defn shutdown!
   "Shuts down the Pi4J context and releases all GPIO resources."
@@ -37,8 +36,7 @@
     (servo/clean-all! srv))
 
   ; shutdown camera
-  (let [camera (:camera system)]
-    (camera/shutdown-camera! camera))
+  (camera/shutdown-camera!))
 
   ; shutdown neopixel daemon
   (neopixel/stop-daemon!)
