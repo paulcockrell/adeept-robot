@@ -17,7 +17,7 @@
         motors (motor/create-motors pi4j)
         sensors {:ultrasound-sensor (ultrasound/create-sensor pi4j)
                  :ldr-sensor (ldr/create-sensor pi4j)}
-        servo (servo/create-servo pi4j)]
+        servo (servo/create-servo pi4j)
         _ (camera/create-camera "resources/public/camera-frame.jpg")]
     {:pi4j pi4j
      :motors motors
@@ -36,7 +36,7 @@
     (servo/clean-all! srv))
 
   ; shutdown camera
-  (camera/shutdown-camera!))
+  (camera/shutdown-camera!)
 
   ; shutdown neopixel daemon
   (neopixel/stop-daemon!)

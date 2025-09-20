@@ -36,6 +36,6 @@
 (defn shutdown-camera! []
   (when @video-cap-instance
     (.release @video-cap-instance)
-    (reset video-cap-instance nil)
-    (reset frame-instance nil)
-    (println "[CAMERA] Shutdown"))
+    (reset! video-cap-instance nil)
+    (reset! frame-instance nil)
+    (println "[CAMERA] Shutdown")))
