@@ -3,7 +3,12 @@
             [robot.hardware.mock.camera :as mock-camera]
             [robot.env :as env]))
 
-(defn capture-frame! [outfile]
+(defn create-camera [outfile]
   (if env/is-rpi?
-    (camera/capture-frame! outfile)
-    (mock-camera/capture-frame! outfile)))
+    (camera/create-camera outfile)
+    (mock-camera/create-camera outfile)))
+
+(defn capture-frame! []
+  (if env/is-rpi?
+    (camera/capture-frame!)
+    (mock-camera/capture-frame!)))
