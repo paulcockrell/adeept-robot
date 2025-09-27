@@ -6,9 +6,11 @@
 (defonce outfile (atom nil))
 
 (defn create-camera [new-outfile]
+  (println "[MOCK CAMERA] Created")
   (reset! outfile new-outfile))
 
-(defn shutdown-camera! [] nil)
+(defn shutdown-camera! []
+  (println "[CAMERA] Shutdown"))
 
 (defn capture-frame!
   "Copies test_frame.jpg from resources and embeds frame

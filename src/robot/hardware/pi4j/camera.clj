@@ -15,23 +15,24 @@
 
 (defn create-camera [outfile]
   (let [video-cap (VideoCapture. 0) ; 0 = default camera
-          frame (Mat.)]
-      (when-not (.isOpened video-cap)
-        (throw (ex-info "[CAMERA] Camera could not be opened" {})))
+        frame (Mat.)]
+    (when-not (.isOpened video-cap)
+      (throw (ex-info "[CAMERA] Camera could not be opened" {})))
 
-      (println "[CAMERA] Created")
+    (println "[CAMERA] Created")
 
       ;; save references so they persist
-      (reset! video-cap-instance video-cap)
-      (reset! frame-instance frame)
+    (reset! video-cap-instance video-cap)
+    (reset! frame-instance frame)
 
-      (go-loop []
-        (when (and (not @shutting-down?)
-                   @ready
-                   (.read video-cap frame))
-          (opencv_imgcodecs/imwrite outfile frame)
-          (reset! ready false))
-        (recur))))
+    (go-loop []
+      (when (and (not @shutting-down?)
+                 @ready
+                 (.read video-cap frame))
+        (println "[CAMERA] Capturing frame")
+        (opencv_imgcodecs/imwrite outfile frame)
+        (reset! ready false))
+      (recur))))
 
 (defn shutdown-camera! []
   (when @video-cap-instance
