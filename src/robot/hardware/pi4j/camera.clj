@@ -26,12 +26,12 @@
     (reset! frame-instance frame)
 
     (go-loop []
-      (when (and (not @shutting-down?)
-                 @ready
-                 (.read video-cap frame))
-        (println "[CAMERA] Capturing frame")
-        (opencv_imgcodecs/imwrite outfile frame)
-        (reset! ready false))
+      (when (and @ready (not @shutting-down?))
+        (if (.read video-cap frame)
+          (do
+            (opencv_imgcodecs/imwrite outfile frame)
+            (reset! ready false))
+          (println "[CAMERA] Failed to capture frame")))
       (recur))))
 
 (defn shutdown-camera! []
