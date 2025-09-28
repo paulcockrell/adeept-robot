@@ -1,7 +1,7 @@
 (ns robot.hardware.pi4j.camera
   (:require [robot.mini-ros.core :refer [publish!]])
   (:import [processing.video Capture]
-           [ch.bildspur.opencv.processin OpenCV]
+           [gab.opencv.processin OpenCV]
            [java.awt Rectangle Color]
            [javax.imageio ImageIO]
            [java.io ByteArrayOutputStream]))

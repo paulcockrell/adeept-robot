@@ -1,4 +1,4 @@
-{:paths ["src" "resources"]
+{:paths ["src" "resources" "lib"]
 
  :deps {;; Core
         org.clojure/clojure {:mvn/version "1.11.1"}
@@ -55,3 +55,4 @@
 
   ;; Web server + Robot server) alias
   :server {:exec-fn main/-main}}}
+
