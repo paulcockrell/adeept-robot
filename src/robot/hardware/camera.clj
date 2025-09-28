@@ -5,16 +5,13 @@
 
 (defn create-camera [outfile]
   (if env/is-rpi?
-    (camera/create-camera outfile)
+    (camera/create-camera)
     (mock-camera/create-camera outfile)))
 
 (defn shutdown-camera! []
-  (if env/is-rpi?
-    (camera/shutdown-camera!)
+  (when-not env/is-rpi?
     (mock-camera/shutdown-camera!)))
 
 (defn capture-frame! []
-  (println "XXX capture-frame!")
-  (if env/is-rpi?
-    (camera/capture-frame!)
+  (when-not env/is-rpi?
     (mock-camera/capture-frame!)))

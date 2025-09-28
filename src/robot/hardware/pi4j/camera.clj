@@ -1,44 +1,45 @@
 (ns robot.hardware.pi4j.camera
-  (:require [clojure.core.async :refer [go-loop <! timeout]]
-            [robot.mini-ros.core :refer [publish!]]
-            [robot.mini-ros.state :refer [shutting-down?]])
-  (:import [org.bytedeco.opencv.global opencv_imgcodecs]
-           [org.bytedeco.opencv.global opencv_videoio]
-           [org.bytedeco.opencv.opencv_videoio VideoCapture]
-           [org.bytedeco.opencv.opencv_core Mat]))
+  (:require [robot.mini-ros.core :refer [publish!]])
+  (:import [processing.video Capture]
+           [ch.bildspur.opencv.processin OpenCV]
+           [java.awt Rectangle Color]
+           [javax.imageio ImageIO]
+           [java.io ByteArrayOutputStream]))
 
-(defonce ready (atom false))
-(defonce video-cap-instance (atom nil))
+;; Shared state: latest JPEG frame with overlays
+(def latest-frame (atom nil))
 
-(defn capture-frame! []
-  (reset! ready true))
+(defn- encode-jpeg [^processing.core.PImage pimage faces]
+  (let [img (.getNative pimage)
+        g   (.createGraphics img)]
+    (try
+      (.setColor g (Color. 0 255 0))
+      (.setStroke g (java.awt.BasicStroke. 2))
+      (doseq [^Rectangle face faces]
+        (.drawRect g (.x face) (.y face) (.width face) (.height face)))
+      (let [baos (ByteArrayOutputStream.)]
+        (ImageIO/write img "jpg" baos)
+        (.toByteArray baos))
+      (finally
+        (.dispose g)))))
 
-(defn create-camera [outfile]
-  (let [video-cap (VideoCapture. 0)] ; 0 = default camera
-    (if (.isOpened video-cap)
-      (do 
-        (.set video-cap opencv_videoio/CAP_PROP_FRAME_WIDTH 640)
-        (.set video-cap opencv_videoio/CAP_PROP_FRAME_HEIGHT 480))
-      (throw (ex-info "[CAMERA] Camera could not be opened" {})))
-
-    (reset! video-cap-instance video-cap)
-
-    (println "[CAMERA] Created")
-
-    (go-loop []
-      (when-not @shutting-down?
-        (if @ready
-          (let [frame (Mat.)]
-            (if (.read @video-cap-instance frame)
-              (do
-                (opencv_imgcodecs/imwrite outfile frame)
-                (reset! ready false))
-              (println "[CAMERA] Failed to capture frame")))
-          (<! (timeout 50))) ; wait 50ms when idle
-        (recur)))))
-
-(defn shutdown-camera! []
-  (when @video-cap-instance
-    (.release @video-cap-instance)
-    (reset! video-cap-instance nil)
-    (println "[CAMERA] Shutdown")))
+(defn create-camera []
+  (let [video  (Capture. nil 320 240)
+        opencv (OpenCV. nil 320 240)]
+    (.loadCascade opencv OpenCV/CASCADE_FRONTALFACE)
+    (.start video)
+    (future
+      (while true
+        (when (.available video)
+          (.read video)
+          (.loadImage opencv video)
+          (let [faces (.detect opencv)]
+            ;; publish events
+            (doseq [^Rectangle face faces]
+              (publish! "camera/face-detected"
+                        {:x (.x face) :y (.y face)
+                         :w (.width face) :h (.height face)}))
+            ;; store annotated JPEG for web streaming
+            (reset! latest-frame (encode-jpeg video faces)))))
+      (Thread/sleep 33))
+    video))

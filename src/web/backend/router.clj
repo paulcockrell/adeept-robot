@@ -1,6 +1,5 @@
 (ns web.backend.router
   (:require [taoensso.sente :as sente]
-            [clojure.string :as str]
             [compojure.route :as route]
             [compojure.core :as comp :refer (defroutes GET POST)]
             [web.backend.endpoints :as endpoints]
@@ -11,6 +10,9 @@
   ;; Sente websocket/ajax
   (GET  "/chsk" ring-req (socket/ring-ajax-get-or-ws-handshake ring-req))
   (POST "/chsk" ring-req (socket/ring-ajax-post ring-req))
+
+  ;; Camera feed
+  (GET "/camera" [] (endpoints/camera-handler))
 
   ;; Static files under resources/public (css, js, images, etc.)
   (route/resources "/")
@@ -26,5 +28,5 @@
 (defn start! []
   (stop!)
   (reset! router_ (sente/start-server-chsk-router!
-                    socket/ch-chsk handlers/event-msg-handler)))
+                   socket/ch-chsk handlers/event-msg-handler)))
 

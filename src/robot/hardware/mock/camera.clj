@@ -12,6 +12,8 @@
 (defn shutdown-camera! []
   (println "[CAMERA] Shutdown"))
 
+;; TODO We should have a loop in here that does facial recognision on
+;; a set of photos, that publishes messages like the real implementation
 (defn capture-frame!
   "Copies test_frame.jpg from resources and embeds frame
   number before copying to to outfile"
