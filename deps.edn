@@ -11,8 +11,8 @@
 
         ;; Camera processor
         org.boofcv/boofcv-core {:mvn/version "0.44"}
-        com.github.sarxos/webcam-capture {:mvn/version "0.3.12"}
-        com.github.sarxos/webcam-capture-driver-raspberrypi {:mvn/version "0.3.12"}
+        com.github.sarxos/webcam-capture {:mvn/version "0.3.13-SNAPSHOT"}
+        com.github.sarxos/webcam-capture-driver-raspberrypi {:mvn/version "0.3.13-SNAPSHOT"}
 
         ;; Logging
         org.slf4j/slf4j-api {:mvn/version "2.0.9"}
@@ -39,6 +39,12 @@
         reagent/reagent {:mvn/version "1.2.0"}
         re-frame/re-frame {:mvn/version "1.4.3"}
         metosin/reitit-frontend {:mvn/version "0.9.1"}}
+
+ :mvn/repos {"central" {:url "https://repo1.maven.org/maven2/"}
+             "clojars" {:url "https://repo.clojars.org/"}
+             "boofcv" {:url "https://www.boofcv.org/maven"}
+             "oss-snapshots" {:url "https://oss.sonatype.org/content/repositories/snapshots/"}
+             "sarxos" {:url "https://repo.sarxos.pl/maven2"}}
 
  :aliases
  {:repl {:extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
