@@ -10,7 +10,8 @@
         babashka/process {:mvn/version "0.6.23"}
 
         ;; Camera processor
-        org.bytedeco/opencv-platform {:mvn/version "4.7.0-1.5.9"}
+        org.boofcv/boofcv-core {:mvn/version "0.44"}
+        org.boofcv/boofcv-webcamcapture {:mvn/version "0.44"}
 
         ;; Logging
         org.slf4j/slf4j-api {:mvn/version "2.0.9"}
