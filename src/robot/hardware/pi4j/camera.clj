@@ -79,6 +79,7 @@
                      gray  (GrayU8. w h)]
                  ;; BoofCV conversions
                  (ConvertBufferedImage/convertFrom bi color true)
+                 ;; TODO the normalizeToGray method errors as it doesn't take 2 params
                  (boofcv.alg.color.ColorRgb/normalizeToGray color gray)
 
                  ;; Example: global threshold + clean → publish 'on-pixel' count
