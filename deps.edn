@@ -11,7 +11,8 @@
 
         ;; Camera processor
         org.boofcv/boofcv-core {:mvn/version "0.44"}
-        org.boofcv/boofcv-webcamcapture {:mvn/version "0.44"}
+        com.github.sarxos/webcam-capture {:mvn/version "0.3.12"}
+        com.github.sarxos/webcam-capture-driver-raspberrypi {:mvn/version "0.3.12"}
 
         ;; Logging
         org.slf4j/slf4j-api {:mvn/version "2.0.9"}
