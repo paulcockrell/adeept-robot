@@ -4,10 +4,19 @@ Clojure project to control the [Adeept RaspberyPI Robot Car](https://www.adeept.
 
 ## Prerequisits
 
-Install pigpio
+### Install pigpio
 
 ```bash
 sudo apt install pigpiod
+```
+
+### Install camera tools
+
+Make sure your RPI is configured to use the modern camera system
+
+```bash
+sudo apt update
+sudo apt install -y libcamera-apps ffmpeg
 ```
 
 ## Development
@@ -53,6 +62,12 @@ scp -r ./resources user@raspberrypi.local:/path/to/project/
 ```
 
 ## Run
+
+### Start camera stream
+
+```bash
+make camera
+```
 
 ### Web server + robot server
 

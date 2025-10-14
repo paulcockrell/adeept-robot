@@ -1,63 +1,115 @@
 (ns robot.hardware.pi4j.camera
-  (:require [clojure.core.async :refer [go-loop <! timeout]]
-            [clojure.java.io :as io]
-            [robot.mini-ros.state :refer [shutting-down?]])
-  (:import [com.github.sarxos.webcam Webcam]
-           [com.github.sarxos.webcam.ds.raspivid RaspividDriver]
-           [java.awt Dimension]
-           [javax.imageio ImageIO]))
+  (:require [robot.mini-ros.core :refer [publish!]])
+  (:import
+    [java.net URL HttpURLConnection]
+    [java.io BufferedInputStream ByteArrayOutputStream ByteArrayInputStream]
+    [javax.imageio ImageIO]
+    [java.awt Graphics2D BasicStroke Color]
+    [java.awt.image BufferedImage]
+    [boofcv.struct.image GrayU8 Planar]
+    [boofcv.io.image ConvertBufferedImage]
+    [boofcv.alg.filter.binary GThresholdImageOps]
+    [boofcv.alg.filter.binary BinaryImageOps]))
+
+(def latest-frame (atom nil))
+
+(defn ^bytes to-jpeg ^bytes [^BufferedImage bi]
+  (let [baos (ByteArrayOutputStream.)]
+    (ImageIO/write bi "jpg" baos)
+    (.toByteArray baos)))
+
+(defn- read-headers! [^BufferedInputStream in]
+  ;; Read CRLF-delimited header lines until blank line
+  (let [sb (StringBuilder.)]
+    (loop [prev 0 curr (.read in)]
+      (when (= -1 curr) (throw (ex-info "MJPEG stream ended" {})))
+      (.append sb (char curr))
+      (if (and (= prev 13) (= curr 10)) ; saw CRLF
+        (let [h (str sb)]
+          (if (re-find #"\r\n\r\n$" h)
+            h
+            (recur curr (.read in))))
+        (recur curr (.read in))))))
+
+(defn- read-exact-bytes! [^BufferedInputStream in n]
+  (let [buf (byte-array n)]
+    (loop [off 0]
+      (when (< off n)
+        (let [r (.read in buf off (- n off))]
+          (when (neg? r) (throw (ex-info "MJPEG content truncated" {})))
+          (recur (+ off r)))))
+    buf))
+
+(defn- open-mjpeg [url]
+  (doto ^HttpURLConnection (.openConnection (URL. url))
+    (.setRequestProperty "User-Agent" "robot-hal/1.0")
+    (.connect)))
 
 (defonce ready (atom false))
-(defonce webcam-instance (atom nil))
-
-(defn- maybe-set-raspi-driver! []
-  (try
-    (Webcam/setDriver (RaspividDriver.))
-    (println "[CAMERA] Using Raspivid driver")
-    (catch Throwable _
-      (println "[CAMERA] Raspivid driver unavailable, falling back to default"))))
-
-(defn- configure-webcam! [^Webcam webcam width height]
-  (let [size (Dimension. width height)]
-    (.setCustomViewSizes webcam (into-array Dimension [size]))
-    (.setViewSize webcam size)))
 
 (defn capture-frame! []
   (reset! ready true))
 
 (defn create-camera [outfile]
-  (maybe-set-raspi-driver!)
-  (let [webcam (Webcam/getDefault)]
-    (when (nil? webcam)
-      (throw (ex-info "[CAMERA] Camera could not be opened" {})))
+  "Consume MJPEG from rpicam-vid/ffmpeg, process with BoofCV, publish events,
+   and keep annotated JPEG in `latest-frame`."
+  ([]
+   (create-camera "http://127.0.0.1:8081/stream.mjpg"))
+  ([mjpeg-url]
+   (future
+     (let [conn (open-mjpeg mjpeg-url)
+           in   (BufferedInputStream. (.getInputStream conn))]
+       (try
+         ;; Parse boundary from initial headers
+         (let [first-headers (read-headers! in)
+               boundary (or (some-> (re-find #"boundary=([^\r\n;]+)" first-headers) second)
+                            "frame")]
+           (while true
+             ;; Expect: --boundary + headers (incl. Content-Length)
+             ;; Read up to the blank line
+             (let [part-headers (read-headers! in)
+                   len (some-> (re-find #"Content-Length:\s*(\d+)" part-headers)
+                               second
+                               Integer/parseInt)]
+               (when-not len
+                 (throw (ex-info "Missing Content-Length in MJPEG part" {:headers part-headers})))
+               (let [jpeg-bytes (read-exact-bytes! in len)
+                     _          (read-headers! in) ;; consume trailing CRLF after part body
+                     ^BufferedImage bi (ImageIO/read (ByteArrayInputStream. jpeg-bytes))
+                     w (.getWidth bi) h (.getHeight bi)
+                     color (Planar. GrayU8 3 w h)
+                     gray  (GrayU8. w h)]
+                 ;; BoofCV conversions
+                 (ConvertBufferedImage/convertFrom bi color true)
+                 (boofcv.alg.color.ColorRgb/normalizeToGray color gray)
 
-    (configure-webcam! webcam 640 480)
-    (when-not (.isOpen webcam)
-      (.open webcam true))
+                 ;; Example: global threshold + clean → publish 'on-pixel' count
+                 (let [binary (GThresholdImageOps/threshold gray nil 110 true)
+                       cleaned (BinaryImageOps/erode8 binary nil)
+                       ;; naive metric: count of 'on' pixels
+                       on-count (.sum cleaned)]
+                   (publish! "vision/binary" {:on on-count :w w :h h}))
 
-    (reset! webcam-instance webcam)
-    (println "[CAMERA] Created")
-
-    (go-loop []
-      (when-not @shutting-down?
-        (if @ready
-          (try
-            (let [frame (.getImage ^Webcam @webcam-instance)]
-              (if frame
-                (do
-                  (ImageIO/write frame "jpg" (io/file outfile))
-                  (reset! ready false))
-                (println "[CAMERA] Failed to capture frame")))
-            (catch Exception e
-              (println "[CAMERA] Error capturing frame" (.getMessage e))
-              (reset! ready false)))
-          (<! (timeout 50))) ; wait 50ms when idle
-        (recur)))))
+                 ;; Optional overlay (just draw a small cross at center here)
+                 (let [g ^Graphics2D (.getGraphics bi)]
+                   (.setColor g (Color. 0 255 0))
+                   (.setStroke g (BasicStroke. 2.0))
+                   (.drawLine g (quot w 2) (quot h 2) (quot w 2) (+ 5 (quot h 2)))
+                   (.drawLine g (quot w 2) (quot h 2) (+ 5 (quot w 2)) (quot h 2))
+                   (.dispose g))
+                 (reset! latest-frame (to-jpeg bi)))))
+         (catch Exception e
+           (reset! latest-frame nil)
+           (throw e))
+         (finally
+           (.disconnect conn)))))
+   {:latest-frame latest-frame})))
+  )
 
 (defn shutdown-camera! []
-  (when-let [webcam @webcam-instance]
-    (when (.isOpen webcam)
-      (.close webcam))
-    (reset! webcam-instance nil)
-    (reset! ready false)
-    (println "[CAMERA] Shutdown")))
+    (println "[CAMERA] Shutdown"))
+
+;;======================
+
+(defn start-vision-from-mjpeg
+

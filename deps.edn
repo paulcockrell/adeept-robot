@@ -10,9 +10,7 @@
         babashka/process {:mvn/version "0.6.23"}
 
         ;; Camera processor
-        org.boofcv/boofcv-core {:mvn/version "0.44"}
-        com.github.sarxos/webcam-capture {:mvn/version "0.3.13-SNAPSHOT"}
-        com.github.sarxos/webcam-capture-driver-raspberrypi {:mvn/version "0.3.13-SNAPSHOT"}
+        org.boofcv/boofcv-all {:mvn/version "1.2.4"}
 
         ;; Logging
         org.slf4j/slf4j-api {:mvn/version "2.0.9"}
