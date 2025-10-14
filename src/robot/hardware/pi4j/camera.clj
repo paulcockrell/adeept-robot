@@ -1,15 +1,15 @@
 (ns robot.hardware.pi4j.camera
   (:require [robot.mini-ros.core :refer [publish!]])
   (:import
-    [java.net URL HttpURLConnection]
-    [java.io BufferedInputStream ByteArrayOutputStream ByteArrayInputStream]
-    [javax.imageio ImageIO]
-    [java.awt Graphics2D BasicStroke Color]
-    [java.awt.image BufferedImage]
-    [boofcv.struct.image GrayU8 Planar]
-    [boofcv.io.image ConvertBufferedImage]
-    [boofcv.alg.filter.binary GThresholdImageOps]
-    [boofcv.alg.filter.binary BinaryImageOps]))
+   [java.net URL HttpURLConnection]
+   [java.io BufferedInputStream ByteArrayOutputStream ByteArrayInputStream]
+   [javax.imageio ImageIO]
+   [java.awt Graphics2D BasicStroke Color]
+   [java.awt.image BufferedImage]
+   [boofcv.struct.image GrayU8 Planar]
+   [boofcv.io.image ConvertBufferedImage]
+   [boofcv.alg.filter.binary GThresholdImageOps]
+   [boofcv.alg.filter.binary BinaryImageOps]))
 
 (def latest-frame (atom nil))
 
@@ -50,11 +50,9 @@
 (defn capture-frame! []
   (reset! ready true))
 
-(defn create-camera [outfile]
+(defn create-camera
   "Consume MJPEG from rpicam-vid/ffmpeg, process with BoofCV, publish events,
    and keep annotated JPEG in `latest-frame`."
-  ([]
-   (create-camera "http://127.0.0.1:8081/stream.mjpg"))
   ([mjpeg-url]
    (future
      (let [conn (open-mjpeg mjpeg-url)
@@ -98,18 +96,12 @@
                    (.drawLine g (quot w 2) (quot h 2) (+ 5 (quot w 2)) (quot h 2))
                    (.dispose g))
                  (reset! latest-frame (to-jpeg bi)))))
-         (catch Exception e
-           (reset! latest-frame nil)
-           (throw e))
-         (finally
-           (.disconnect conn)))))
-   {:latest-frame latest-frame})))
-  )
+           (catch Exception e
+             (reset! latest-frame nil)
+             (throw e))
+           (finally
+             (.disconnect conn)))))
+     {:latest-frame latest-frame})))
 
 (defn shutdown-camera! []
-    (println "[CAMERA] Shutdown"))
-
-;;======================
-
-(defn start-vision-from-mjpeg
-
+  (println "[CAMERA] Shutdown"))
