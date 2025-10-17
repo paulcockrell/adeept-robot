@@ -53,55 +53,55 @@
 (defn create-camera
   "Consume MJPEG from rpicam-vid/ffmpeg, process with BoofCV, publish events,
    and keep annotated JPEG in `latest-frame`."
-  ([mjpeg-url]
-   (future
-     (let [conn (open-mjpeg mjpeg-url)
-           in   (BufferedInputStream. (.getInputStream conn))]
-       (try
+  [mjpeg-url]
+  (future
+    (let [conn (open-mjpeg mjpeg-url)
+          in   (BufferedInputStream. (.getInputStream conn))]
+      (try
          ;; Parse boundary from initial headers
-         (let [first-headers (read-headers! in)
-               boundary (or (some-> (re-find #"boundary=([^\r\n;]+)" first-headers) second)
-                            "frame")]
-           (while true
+        (let [first-headers (read-headers! in)
+              boundary (or (some-> (re-find #"boundary=([^\r\n;]+)" first-headers) second)
+                           "frame")]
+          (while true
              ;; Expect: --boundary + headers (incl. Content-Length)
              ;; Read up to the blank line
-             (let [part-headers (read-headers! in)
-                   len (some-> (re-find #"Content-Length:\s*(\d+)" part-headers)
-                               second
-                               Integer/parseInt)]
-               (when-not len
-                 (throw (ex-info "Missing Content-Length in MJPEG part" {:headers part-headers})))
-               (let [jpeg-bytes (read-exact-bytes! in len)
-                     _          (read-headers! in) ;; consume trailing CRLF after part body
-                     ^BufferedImage bi (ImageIO/read (ByteArrayInputStream. jpeg-bytes))
-                     w (.getWidth bi) h (.getHeight bi)
-                     color (Planar. GrayU8 3 w h)
-                     gray  (GrayU8. w h)]
+            (let [part-headers (read-headers! in)
+                  len (some-> (re-find #"Content-Length:\s*(\d+)" part-headers)
+                              second
+                              Integer/parseInt)]
+              (when-not len
+                (throw (ex-info "Missing Content-Length in MJPEG part" {:headers part-headers})))
+              (let [jpeg-bytes (read-exact-bytes! in len)
+                    _          (read-headers! in) ;; consume trailing CRLF after part body
+                    ^BufferedImage bi (ImageIO/read (ByteArrayInputStream. jpeg-bytes))
+                    w (.getWidth bi) h (.getHeight bi)
+                    color (Planar. GrayU8 3 w h)
+                    gray  (GrayU8. w h)]
                  ;; BoofCV conversions
-                 (ConvertBufferedImage/convertFrom bi color true)
-                 (boofcv.alg.color.ColorRgb/rgbToGray_Weighted color gray)
+                (ConvertBufferedImage/convertFrom bi color true)
+                (boofcv.alg.color.ColorRgb/rgbToGray_Weighted color gray)
 
                  ;; Example: global threshold + clean → publish 'on-pixel' count
-                 (let [binary (GThresholdImageOps/threshold gray nil 110 true)
-                       cleaned (BinaryImageOps/erode8 binary 1 nil)
+                (let [binary (GThresholdImageOps/threshold gray nil 110 true)
+                      cleaned (BinaryImageOps/erode8 binary 1 nil)
                        ;; naive metric: count of 'on' pixels
-                       on-count (.sum cleaned)]
-                   (publish! "vision/binary" {:on on-count :w w :h h}))
+                      on-count (.sum cleaned)]
+                  (publish! "vision/binary" {:on on-count :w w :h h}))
 
                  ;; Optional overlay (just draw a small cross at center here)
-                 (let [g ^Graphics2D (.getGraphics bi)]
-                   (.setColor g (Color. 0 255 0))
-                   (.setStroke g (BasicStroke. 2.0))
-                   (.drawLine g (quot w 2) (quot h 2) (quot w 2) (+ 5 (quot h 2)))
-                   (.drawLine g (quot w 2) (quot h 2) (+ 5 (quot w 2)) (quot h 2))
-                   (.dispose g))
-                 (reset! latest-frame (to-jpeg bi))))
-           (catch Exception e
-             (reset! latest-frame nil)
-             (throw e))
-           (finally
-             (.disconnect conn))))))
-     {:latest-frame latest-frame})))
+                (let [g ^Graphics2D (.getGraphics bi)]
+                  (.setColor g (Color. 0 255 0))
+                  (.setStroke g (BasicStroke. 2.0))
+                  (.drawLine g (quot w 2) (quot h 2) (quot w 2) (+ 5 (quot h 2)))
+                  (.drawLine g (quot w 2) (quot h 2) (+ 5 (quot w 2)) (quot h 2))
+                  (.dispose g))
+                (reset! latest-frame (to-jpeg bi))))))
+        (catch Exception e
+          (reset! latest-frame nil)
+          (throw e))
+        (finally
+          (.disconnect conn))))
+    {:latest-frame latest-frame}))
 
 (defn shutdown-camera! []
   (println "[CAMERA] Shutdown"))
