@@ -79,12 +79,11 @@
                      gray  (GrayU8. w h)]
                  ;; BoofCV conversions
                  (ConvertBufferedImage/convertFrom bi color true)
-                 ;; TODO the normalizeToGray method errors as it doesn't take 2 params
-                 (boofcv.alg.color.ColorRgb/normalizeToGray color gray)
+                 (boofcv.alg.color.ColorRgb/rgbToGray_Weighted color gray)
 
                  ;; Example: global threshold + clean → publish 'on-pixel' count
                  (let [binary (GThresholdImageOps/threshold gray nil 110 true)
-                       cleaned (BinaryImageOps/erode8 binary nil)
+                       cleaned (BinaryImageOps/erode8 binary 1 nil)
                        ;; naive metric: count of 'on' pixels
                        on-count (.sum cleaned)]
                    (publish! "vision/binary" {:on on-count :w w :h h}))
@@ -96,12 +95,12 @@
                    (.drawLine g (quot w 2) (quot h 2) (quot w 2) (+ 5 (quot h 2)))
                    (.drawLine g (quot w 2) (quot h 2) (+ 5 (quot w 2)) (quot h 2))
                    (.dispose g))
-                 (reset! latest-frame (to-jpeg bi)))))
+                 (reset! latest-frame (to-jpeg bi))))
            (catch Exception e
              (reset! latest-frame nil)
              (throw e))
            (finally
-             (.disconnect conn)))))
+             (.disconnect conn))))))
      {:latest-frame latest-frame})))
 
 (defn shutdown-camera! []

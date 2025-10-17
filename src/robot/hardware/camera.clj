@@ -14,7 +14,5 @@
     (mock-camera/shutdown-camera!)))
 
 (defn capture-frame! []
-  (println "XXX capture-frame!")
-  (if env/is-rpi?
-    (camera/capture-frame!)
+  (when (not env/is-rpi?)
     (mock-camera/capture-frame!)))
