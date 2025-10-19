@@ -1,4 +1,4 @@
-.PHONY: repl frontend-dev frontend-release server
+.PHONY: repl frontend-dev frontend-release server camera
 
 IS_RPI ?= false
 

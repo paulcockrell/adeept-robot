@@ -1,6 +1,7 @@
 (ns web.frontend.views.mode-manual
   (:require [re-frame.core :as rf]
             [reagent.core :as ra]
+            [web.frontend.views.components.camera-viewport :as camera-viewport]
             [web.frontend.layout.layout :as layout]))
 
 (defn on-mount []
@@ -106,8 +107,7 @@
        [:article.video
         [:header "Video"]
         [:div.body
-        [:img {:src "/camera"}]]]]
-      ]]
+         [camera-viewport/camera-viewport]]]]]]
 
     (finally (on-dismount))))
 
