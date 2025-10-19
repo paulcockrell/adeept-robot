@@ -54,12 +54,9 @@
   "Consume MJPEG from rpicam-vid/ffmpeg, process with BoofCV, publish events,
    and keep annotated JPEG in `latest-frame`."
   [mjpeg-url]
-  (println "XXX 1")
   (future
-    (println "XXX 2")
     (let [conn (open-mjpeg mjpeg-url)
           in   (BufferedInputStream. (.getInputStream conn))]
-    (println "XXX 3")
       (try
          ;; Parse boundary from initial headers
         (let [first-headers (read-headers! in)
@@ -72,7 +69,6 @@
                   len (some-> (re-find #"Content-Length:\s*(\d+)" part-headers)
                               second
                               Integer/parseInt)]
-              (println "XXX hello")
               (when-not len
                 (throw (ex-info "Missing Content-Length in MJPEG part" {:headers part-headers})))
               (let [jpeg-bytes (read-exact-bytes! in len)
