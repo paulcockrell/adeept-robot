@@ -1,11 +1,11 @@
 (ns robot.hardware.pi4j.camera
   (:require [robot.mini-ros.core :refer [publish!]])
   (:import
-   [java.io DataInputStream BufferedInputStream ByteArrayOutputStream InputStream]
-   [java.nio.file Files Paths StandardOpenOption]
+   [java.io ByteArrayOutputStream]
    [javax.imageio ImageIO]
    [java.awt Graphics2D BasicStroke Color]
    [java.awt.image BufferedImage]
+   [java.awt.misc ImageStatistics]
    [boofcv.struct.image GrayU8]
    [boofcv.io.image ConvertBufferedImage]
    [boofcv.alg.filter.binary GThresholdImageOps]
@@ -53,7 +53,7 @@
                (let [binary (GrayU8. W H)]
                  (GThresholdImageOps/threshold gray binary 110 true)
                  (let [eroded (BinaryImageOps/erode8 binary 1 nil)
-                       on-count (.sum eroded)]
+                       on-count (long (ImageStatistics/sum eroded))]
                    (publish! "vision/binary" {:on on-count :w W :h H})))
 
                ;; --- Optional overlay & JPEG for /camera ---
