@@ -49,25 +49,41 @@
                ;; Copy Y into GrayU8
                (System/arraycopy ybuf 0 (.data gray) 0 BYTES-Y)
 
-               ;; --- Example BoofCV processing: simple threshold + erode ---
-               (let [binary (GrayU8. W H)]
-                 (GThresholdImageOps/threshold gray binary 110 true)
-                 (let [eroded (BinaryImageOps/erode8 binary 1 nil)
-                       on-count (long (ImageStatistics/sum eroded))]
-                   (publish! "vision/binary" {:on on-count :w W :h H})))
-
-               ;; --- Optional overlay & JPEG for /camera ---
-               (let [bi (ConvertBufferedImage/convertTo gray nil)
-                     g  ^Graphics2D (.getGraphics bi)]
-                 (.setColor g (Color. 0 255 0))
-                 (.setStroke g (BasicStroke. 2.0))
-                 ;; tiny crosshair at center
-                 (.drawLine g (quot W 2) (dec (quot H 2))
-                            (quot W 2) (+ 1 (quot H 2)))
-                 (.drawLine g (dec (quot W 2)) (quot H 2)
-                            (+ 1 (quot W 2)) (quot H 2))
-                 (.dispose g)
-                 (reset! latest-frame (jpeg-bytes bi)))
+               (let [^bytes ydata (.data gray)
+                     thr (int 100)
+                     w W
+                     h H
+                     ;; accumulators 
+                     sx (long-array 1)
+                     sy (long-array 1)
+                     cnt (long-array 1)]
+                 ;; Compute centroid of all Y>thr 
+                 (dotimes [y h]
+                   (let [row-off (* y w)]
+                     (dotimes [x w]
+                       (let [v (bit-and 0xff (aget ydata (+ row-off x)))]
+                         (when (> v thr)
+                           (aset-long sx 0 (+ (aget sx 0) x))
+                           (aset-long sy 0 (+ (aget sy 0) y))
+                           (aset-long cnt 0 (inc (aget cnt 0))))))))
+                 (let [n (aget cnt 0)]
+                   (when (pos? n)
+                     (let [cx (int (Math/round (double (/ (aget sx 0) n))))
+                           cy (int (Math/round (double (/ (aget sy 0) n))))]
+                       ;; publish blob position + size proxy 
+                       (publish! "vision/blog" {:x cx :y cy :count n :w W :h :H})
+                       ;; draw a big crosshair so it's obvious in grayscale 
+                       (let [bi (ConvertBufferedImage/convertTo gray nil)
+                             g ^Graphics2D (.getGraphics bi)
+                             arm 20]
+                         (.setColor g (Color. 255 0 0))
+                         (.setStroke g (BasicStroke. 3.0))
+                         (.drawLine g (max 0 (- cx arm)) cy (min (dec W) (+ cx arm)) cy)
+                         (.drawLine g cx (max 0 (- cy arm)) cx (min (dec H) (+ cy arm)))
+                         (.dispose g)
+                         (reset! latest-frame (let [baos (ByteArrayOutputStream.)]
+                                                (ImageIO/write bi "jpg" baos)
+                                                (.toByteArray baos))))))))
 
                 ;; ~30fps target; tune as desired
                (Thread/sleep 33)))
