@@ -2,15 +2,6 @@
   (:require [re-frame.core :as rf]
             [reagent.core :as ra]))
 
-(def camera-frame-timer (atom nil))
-
-(defn on-mount []
-  (reset! camera-frame-timer (js/setInterval #(rf/dispatch [:tick]) 1000)))
-
-(defn on-dismount []
-  (js/clearTimeout @camera-frame-timer)
-  (reset! camera-frame-timer nil))
-
 (rf/reg-event-db
  :tick
  (fn [db _]
@@ -20,12 +11,29 @@
  :frame-timestamp
  (fn [db _] (:frame-timestamp db)))
 
-(defn camera-viewport []
+(defn is-rpi? [] (= (.-port js/location) "3000"))
+
+(def camera-frame-timer (atom nil))
+
+(defn on-mount []
+  (reset! camera-frame-timer (js/setInterval #(rf/dispatch [:tick]) 1000)))
+
+(defn on-dismount []
+  (js/clearTimeout @camera-frame-timer)
+  (reset! camera-frame-timer nil))
+
+(defn dummy-camera-viewport []
   (ra/with-let [_ (on-mount)]
     (let [ts @(rf/subscribe [:frame-timestamp])]
-      [:div
-       [:img {:src (str "/camera-frame.jpg?t=" ts)
-              :style {:max-width "100%"}}] ;; dummy camera feed (not on pi)
-       [:img {:src "/camera"
-              :style {:max-width "100%"}}]]) ;; live camera feed (on rpi)
+      [:img {:src (str "/camera-frame.jpg?t=" ts)
+             :style {:max-width "100%"}}])
     (finally (on-dismount))))
+
+(defn live-camera-viewport []
+  [:img {:src "/camera"
+         :style {:max-width "100%"}}])
+
+(defn camera-viewport []
+  (if (is-rpi?)
+    (live-camera-viewport)
+    (dummy-camera-viewport)))
