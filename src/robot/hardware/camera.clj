@@ -5,7 +5,7 @@
 
 (defn create-camera [outfile]
   (if env/is-rpi?
-    (camera/create-camera "http://127.0.0.1:8081/stream.mjpg") ;; TODO - move this to an argument
+    (camera/create-camera)
     (mock-camera/create-camera outfile)))
 
 (defn shutdown-camera! []
