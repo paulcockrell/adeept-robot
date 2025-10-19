@@ -21,8 +21,10 @@
  (fn [db _] (:frame-timestamp db)))
 
 (defn camera-viewport []
-  (ra/with-let [_ (on-mount)]
-    (let [ts @(rf/subscribe [:frame-timestamp])]
-      [:img {:src (str "/camera-frame.jpg?t=" ts)
-            :style {:max-width "100%"}}])
-    (finally (on-dismount))))
+  (if is-rpi?
+    [:img {:src "/camera"}]
+    (ra/with-let [_ (on-mount)]
+      (let [ts @(rf/subscribe [:frame-timestamp])]
+        [:img {:src (str "/camera-frame.jpg?t=" ts)
+              :style {:max-width "100%"}}])
+      (finally (on-dismount)))))

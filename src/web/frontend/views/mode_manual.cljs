@@ -101,7 +101,13 @@
        [:article.led-controls
         [:header "LED controls"]
         [:div.body
-         [led-controls]]]]]]
+         [led-controls]]]]
+      [:div.grid
+       [:article.video
+        [:header "Video"]
+        [:div.body
+        [:img {:src "/camera"}]]]]
+      ]]
 
     (finally (on-dismount))))
 
