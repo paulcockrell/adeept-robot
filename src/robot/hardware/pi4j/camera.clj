@@ -20,12 +20,6 @@
 
 (def latest-frame (atom nil))
 
-(defn- read-exact! ^long [^BufferedInputStream in ^bytes buf]
-  ;; Fills the buffer or throws EOFExceptoin if the producer stops
-  (let [din (DataInputStream. in)]
-    (.readFully din buf 0 (alength buf))
-    (alength buf)))
-
 (defn- jpeg-bytes ^bytes [^BufferedImage bi]
   (let [baos (ByteArrayOutputStream.)]
     (ImageIO/write bi "jpg" baos)
@@ -43,11 +37,10 @@
            gray (GrayU8. W H)]
        (loop []
          (try
-           ;; Open FIFO (blocks until producer present)
-           (with-open [raw-in (-> (Paths/get fifo-path (make-array String 0))
-                                  (Files/newInputStream (into-array StandardOpenOption []))
-                                  (BufferedInputStream. (* 1024 64)))
-                       din    (DataInputStream. ^InputStream raw-in)]
+           (with-open [raw-in (java.io.BufferedInputStream.
+                               (java.io.FileInputStream. fifo-path) ; <-- plain FileInputStream for FIFO
+                               (* 1024 64))
+                       din    (java.io.DataInputStream. ^java.io.InputStream raw-in)]
              (while true
                ;; --- Read one YUV420 frame ---
                (.readFully din ybuf 0 BYTES-Y)   ;; Y plane
