@@ -11,4 +11,4 @@
   (ra/with-let [_ (on-mount)]
     [layout/layout
      [:section
-      [:h1 "Hello, Robot!"]]]))
+      [:h1 "Hello, ClojureBot"]]]))

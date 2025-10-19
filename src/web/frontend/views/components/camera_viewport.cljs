@@ -25,6 +25,7 @@
     (let [ts @(rf/subscribe [:frame-timestamp])]
       [:div
        [:img {:src (str "/camera-frame.jpg?t=" ts)
-              :style {:max-width "100%"}}] ;; dummy feed not on pi
-       [:img {:src "/camera"}]]) ;; live feed on rpi
+              :style {:max-width "100%"}}] ;; dummy camera feed (not on pi)
+       [:img {:src "/camera"
+              :style {:max-width "100%"}}]]) ;; live camera feed (on rpi)
     (finally (on-dismount))))
