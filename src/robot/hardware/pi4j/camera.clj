@@ -5,7 +5,7 @@
    [javax.imageio ImageIO]
    [java.awt Graphics2D BasicStroke Color]
    [java.awt.image BufferedImage]
-   [java.awt.misc ImageStatistics]
+   [boofcv.alg.misc ImageStatistics]
    [boofcv.struct.image GrayU8]
    [boofcv.io.image ConvertBufferedImage]
    [boofcv.alg.filter.binary GThresholdImageOps]
