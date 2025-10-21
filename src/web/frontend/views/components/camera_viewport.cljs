@@ -12,8 +12,7 @@
  (fn [db _] (:frame-timestamp db)))
 
 (defn is-rpi? []
-  (or (= (.-port js/location) "80")
-      (= (.-port js/location) "443")))
+  (= (.-host js/location) "raspberrypi.local"))
 
 (def camera-frame-timer (atom nil))
 

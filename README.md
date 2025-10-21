@@ -82,7 +82,11 @@ sudo make server IS_RPI=true
 You have to check what IP has been assigned to your RaspberryPI and simply
 access that in a browser from a machine on the same network.
 
-e.g: [http://192.168.1.218](http://192.168.1.218)
+e.g: [http://raspberrypi.local](http://raspberrypi.local)
+
+_Please note that the web code expects you to use the URL `raspberrypi.local`
+so that it can determine if you are running on the Raspberry Pi or developing on
+another machine_
 
 ## Logic diagram
 
