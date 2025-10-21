@@ -61,11 +61,11 @@
                      g  ^Graphics2D (.getGraphics bi)]
                  (.setColor g (Color. 0 255 0))
                  (.setStroke g (BasicStroke. 2.0))
-                 ;; tiny crosshair at center
-                 (.drawLine g (quot W 20) (dec (quot H 20))
-                            (quot W 20) (+ 1 (quot H 20)))
-                 (.drawLine g (dec (quot W 20)) (quot H 20)
-                            (+ 1 (quot W 20)) (quot H 20))
+                 ;; crosshair at center
+                 (.drawLine g (quot W 2) (- 10 (quot H 2))
+                            (quot W 2) (+ 10 (quot H 2))) ;; vertical line
+                 (.drawLine g (- 10 (quot W 2)) (quot H 2)
+                            (+ 10 (quot W 20)) (quot H 2)) ;; horizonal line
                  (.dispose g)
                  (reset! latest-frame (jpeg-bytes bi)))
 
