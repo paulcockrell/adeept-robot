@@ -11,7 +11,9 @@
  :frame-timestamp
  (fn [db _] (:frame-timestamp db)))
 
-(defn is-rpi? [] (= (.-port js/location) "3000"))
+(defn is-rpi? []
+  (or (= (.-port js/location) "80")
+      (= (.-port js/location) "443")))
 
 (def camera-frame-timer (atom nil))
 
