@@ -11,8 +11,7 @@
  :frame-timestamp
  (fn [db _] (:frame-timestamp db)))
 
-(defn is-rpi? []
-  (= (.-host js/location) "raspberrypi.local"))
+(defonce is-rpi (= (.-host js/location) "raspberrypi.local"))
 
 (def camera-frame-timer (atom nil))
 
@@ -35,6 +34,6 @@
          :style {:max-width "100%"}}])
 
 (defn camera-viewport []
-  (if (is-rpi?)
+  (if (is-rpi)
     (live-camera-viewport)
     (dummy-camera-viewport)))
