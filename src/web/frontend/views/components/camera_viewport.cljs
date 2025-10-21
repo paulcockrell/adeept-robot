@@ -34,6 +34,6 @@
          :style {:max-width "100%"}}])
 
 (defn camera-viewport []
-  (if (is-rpi)
+  (if is-rpi
     (live-camera-viewport)
     (dummy-camera-viewport)))
