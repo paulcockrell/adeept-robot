@@ -1,5 +1,6 @@
 (ns robot.nodes.web
   (:require [clojure.core.async :refer [go-loop <!]]
+            [clojure.core.match :refer [match]]
             [robot.mini-ros.core :refer [publish! subscribe]]
             [robot.hardware.neopixel :as neopixel]
             [robot.mini-ros.state :refer [robot-state]]))
@@ -26,11 +27,11 @@
 
    :web/led-action
    (fn [payload]
-     (case payload
-       ;; TODO create LED node and publish change
-       :on (neopixel/send-command! "set" 0 0 255)
+     (match payload
+       :on (neopixel/send-command! "set" 255 255 255)
        :off (neopixel/send-command! "set" 0 0 0)
-       (println "[WEB NODE] Unknown camera payload" payload)))})
+       {:red r :green g :blue b} (neopixel/send-command! "set" r g b)
+       _ (println "[WEB NODE] Unknown led payload" payload)))})
 
 (defn start-web-node
   "Responds to web issued commands and republishes translated payload"

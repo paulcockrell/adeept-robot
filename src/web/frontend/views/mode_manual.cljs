@@ -4,6 +4,8 @@
             [web.frontend.views.components.camera-viewport :as camera-viewport]
             [web.frontend.layout.layout :as layout]))
 
+(def current-color (atom {:red 0 :green 0 :blue 0}))
+
 (defn on-mount []
   (println "Entering manual mode")
   (rf/dispatch [:command/mode-manual]))
@@ -30,7 +32,8 @@
              :type "range"
              :on-change (fn [el]
                           (let [value (.. el -target -value)]
-                            (rf/dispatch [command {:colour colour :value value}])))}]))
+                            (swap! current-color merge {colour (int value)})
+                            (rf/dispatch [command @current-color])))}]))
 
 (defn motor-controls []
   [:div.circular-controller.pico-background-yellow-50
