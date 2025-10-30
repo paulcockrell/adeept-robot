@@ -563,3 +563,7 @@ section.mode-manual article .body {
   display: flex;
   justify-content: center;
 }
+
+table.ros-logs {
+  max-height: 500px;
+}

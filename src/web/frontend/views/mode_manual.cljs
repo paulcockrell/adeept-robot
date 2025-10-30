@@ -2,6 +2,7 @@
   (:require [re-frame.core :as rf]
             [reagent.core :as ra]
             [web.frontend.views.components.camera-viewport :as camera-viewport]
+            [web.frontend.views.components.ros-logs :as ros-logs]
             [web.frontend.layout.layout :as layout]))
 
 (def current-color (atom {:red 0 :green 0 :blue 0}))
@@ -110,7 +111,12 @@
        [:article.video
         [:header "Video"]
         [:div.body
-         [camera-viewport/camera-viewport]]]]]]
+         [camera-viewport/camera-viewport]]]]
+      [:div.grid
+       [:article.logs
+        [:header "Robo Logs (max 1000 lines)"]
+        [:div.body.overflow-auto
+         [ros-logs/ros-logs]]]]]]
 
     (finally (on-dismount))))
 
