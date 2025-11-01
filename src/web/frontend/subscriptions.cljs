@@ -15,3 +15,8 @@
  :server/connection
  (fn [db _]
    (get-in db [:server :connection]))) ;; can be either :open :opening :closed :error
+
+(rf/reg-sub
+ :robot/logs
+ (fn [db _]
+   (get-in db [:robot :logs])))

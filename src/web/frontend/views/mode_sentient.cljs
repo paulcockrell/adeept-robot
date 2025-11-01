@@ -30,7 +30,7 @@
          [camera-viewport/camera-viewport]]]]
       [:div.grid
        [:article.logs
-        [:header "Robo Logs (max 1000 lines)"]
+        [:header "Robo Logs (max 25 lines)"]
         [:div.body
          [ros-logs/ros-logs]]]]]]
 

@@ -38,7 +38,7 @@
   [motors drive! stop!]
   (doseq [topic (apply union (vals allowed-topics))]
     (let [ch (subscribe topic)]
-      (println "📡 Subscribed to topic" topic)
+      (println "📡 [Motor arbiter] Subscribed to topic" topic)
       (go-loop []
         (let [{:keys [payload]} (<! ch)
               {:keys [operating-mode]} @robot-state]

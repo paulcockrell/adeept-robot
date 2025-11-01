@@ -34,3 +34,7 @@
 (defmethod -event-msg-handler :robot/mode-updated
   [{:keys [?data]}]
   (rf/dispatch [:robot/mode-updated ?data]))
+
+(defmethod -event-msg-handler :robot/logs
+  [{:keys [?data]}]
+  (rf/dispatch [:robot/logs ?data]))

@@ -10,7 +10,8 @@
     :server {:connection :closed ;; server websocket connection can be either open opening closed
              :timeout-id nil ;; connection timeout timer id
              }
-    :robot {:mode :idle}}))
+    :robot {:mode :idle
+            :logs []}}))
 
 (reg-event-db
  :app/alert-set
@@ -82,6 +83,10 @@
  (fn [_ [_ mode]]
    {:dispatch-n [[:app/alert-set {:type "warning" :message (str "Robot has entered " (name mode) " mode")}]
                  [:state-update/robot-mode {:mode mode}]]}))
+
+(reg-event-db :robot/logs
+              (fn [db [_ v]]
+                (assoc-in db [:robot :logs] (take-last 25 (conj (get-in db [:robot :logs]) v)))))
 
 (reg-event-db
  :state-update/robot-mode
