@@ -86,7 +86,7 @@
 
 (reg-event-db :robot/logs
               (fn [db [_ v]]
-                (assoc-in db [:robot :logs] (take-last 25 (conj (get-in db [:robot :logs]) v)))))
+                (assoc-in db [:robot :logs] (take 25 (conj (get-in db [:robot :logs]) v)))))
 
 (reg-event-db
  :state-update/robot-mode

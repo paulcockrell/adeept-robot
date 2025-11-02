@@ -111,11 +111,10 @@
        [:article.video
         [:header "Video"]
         [:div.body
-         [camera-viewport/camera-viewport]]]]
-      [:div.grid
+         [camera-viewport/camera-viewport]]]
        [:article.logs
-        [:header "Robo Logs (max 1000 lines)"]
-        [:div.body.overflow-auto
+        [:header "Robo Logs (max 25 lines)"]
+        [:div.body.robot-logs-container
          [ros-logs/ros-logs]]]]]]
 
     (finally (on-dismount))))

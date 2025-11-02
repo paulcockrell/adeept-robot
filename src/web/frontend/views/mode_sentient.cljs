@@ -27,11 +27,10 @@
        [:article.motor-controls
         [:header "Camera"]
         [:div.body
-         [camera-viewport/camera-viewport]]]]
-      [:div.grid
+         [camera-viewport/camera-viewport]]]
        [:article.logs
         [:header "Robo Logs (max 25 lines)"]
-        [:div.body
+        [:div.body.robot-logs-container
          [ros-logs/ros-logs]]]]]]
 
     (finally (on-dismount))))

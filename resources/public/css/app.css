@@ -564,6 +564,7 @@ section.mode-manual article .body {
   justify-content: center;
 }
 
-table.ros-logs {
+.robot-logs-container {
   max-height: 500px;
+  overflow-y: auto;
 }

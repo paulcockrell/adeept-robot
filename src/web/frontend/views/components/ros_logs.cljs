@@ -3,10 +3,10 @@
 
 (defn ros-logs []
   (let [logs @(rf/subscribe [:robot/logs])]
-    [:table.striped.ros-logs
+    [:table.striped.robot-logs
      [:tbody
       (doall
-       (for [{:keys [topic payload]} (reverse logs)]
+       (for [{:keys [topic payload]} logs]
          ^{:key (random-uuid)}
          [:tr
           [:td (str topic)]
