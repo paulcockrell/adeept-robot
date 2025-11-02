@@ -20,7 +20,18 @@
 (def ^:private BYTES-Y (* W H))
 (def ^:private BYTES-UV (/ (* W H) 2)) ; skip size (U+V) for YUV420p
 
+(def ^:private last-time (atom (System/currentTimeMillis)))
+(def ^:private frames (atom 0))
+
 (def latest-frame (atom nil))
+
+(defn- log-fps! []
+  (swap! frames inc)
+  (let [now (System/currentTimeMillis)]
+    (when (> (- now @last-time) 1000)
+      (println "[CAMERA]" @frames "fps")
+      (reset! frames 0)
+      (reset! last-time now))))
 
 (defn- encode-jpeg ^bytes [^BufferedImage bi]
   (let [baos (ByteArrayOutputStream.)]
@@ -66,7 +77,8 @@
     (.drawOval g (max 0 (- x 10)) (max 0 (- y 10)) 20 20)
     (.dispose g)
     (publish! "camera/brightest" {:x x :y y :val val :w W :h H})
-    (reset! latest-frame (encode-jpeg bi))))
+    (reset! latest-frame (encode-jpeg bi))
+    (log-fps!)))
 
 (defn create-camera
   "Reads YUV420p frames from FIFO (e.g. /tmp/camera.yuv), runs simple BoofCV on Y,
@@ -96,7 +108,7 @@
                (handle-frame! gray W H)
 
                ;; ~30fps target; tune as desired
-               (Thread/sleep 10)))
+               (Thread/sleep 33)))
            (catch Exception e
              (println "YUV consumer ended/error:" (.getMessage e))
              ;; Re-open the FIFO when producer restarts
