@@ -5,6 +5,7 @@
    [javax.imageio ImageIO]
    [java.awt Graphics2D BasicStroke Color]
    [java.awt.image BufferedImage]
+   [boofcv.alg.misc PixelMath]
    [boofcv.alg.misc ImageStatistics]
    [boofcv.struct.image GrayU8]
    [boofcv.io.image ConvertBufferedImage]
@@ -18,12 +19,44 @@
 (def ^:private BYTES-Y (* W H))
 (def ^:private BYTES-UV (/ (* W H) 2)) ; skip size (U+V) for YUV420p
 
+(def prev-frame (atom nil))
 (def latest-frame (atom nil))
 
 (defn- jpeg-bytes ^bytes [^BufferedImage bi]
   (let [baos (ByteArrayOutputStream.)]
     (ImageIO/write bi "jpg" baos)
     (.toByteArray baos)))
+
+(defn detect-motion!
+  [^GrayU8 gray]
+  (if-let [^GrayU8 prev @prev-frame]
+    (let [diff (GrayU8. (.width gray) (.heigh gray))]
+      (PixelMath/absDiff gray prev diff)
+      (let [avg-diff (ImageStatistics/mean diff)]
+        (publish! "camera/motion" {:change avg-diff})
+        (when (> avg-diff 5)
+          (publish! "camera/event" {:type :movement-detected}))))
+    (println "Initializing motion baseline"))
+  (reset! prev-frame gray))
+
+(defn draw-crosshairs!
+  [^GrayU8 gray]
+  (let [bi (ConvertBufferedImage/convertTo gray nil)
+        g  ^Graphics2D (.getGraphics bi)]
+    (.setColor g (Color. 255 255 255))
+    (.setStroke g (BasicStroke. 2.0))
+                 ;; crosshair at center
+    (.drawLine g (quot W 2) (- (quot H 2) 10)
+               (quot W 2) (+ (quot H 2) 10)) ;; vertical line
+    (.drawLine g (- (quot W 2) 10) (quot H 2)
+               (+ (quot W 2) 10) (quot H 2)) ;; horizonal line
+    (.dispose g)
+    (reset! latest-frame (jpeg-bytes bi))))
+
+(defn handle-frame!
+  [^GrayU8 gray]
+  (detect-motion! gray)
+  (draw-crosshairs! gray))
 
 (defn create-camera
   "Reads YUV420p frames from FIFO (e.g. /tmp/camera.yuv), runs simple BoofCV on Y,
@@ -49,28 +82,11 @@
                ;; Copy Y into GrayU8
                (System/arraycopy ybuf 0 (.data gray) 0 BYTES-Y)
 
-               ;; --- Example BoofCV processing: simple threshold + erode ---
-               (let [binary (GrayU8. W H)]
-                 (GThresholdImageOps/threshold gray binary 110 true)
-                 (let [eroded (BinaryImageOps/erode8 binary 1 nil)
-                       on-count (long (ImageStatistics/sum eroded))]
-                   (publish! "vision/binary" {:on on-count :w W :h H})))
+               ;; Process data
+               (handle-frame! gray)
 
-               ;; --- Optional overlay & JPEG for /camera ---
-               (let [bi (ConvertBufferedImage/convertTo gray nil)
-                     g  ^Graphics2D (.getGraphics bi)]
-                 (.setColor g (Color. 0 255 0))
-                 (.setStroke g (BasicStroke. 2.0))
-                 ;; crosshair at center
-                 (.drawLine g (quot W 2) (- (quot H 2) 10)
-                            (quot W 2) (+ (quot H 2) 10)) ;; vertical line
-                 (.drawLine g (- (quot W 2) 10) (quot H 2)
-                            (+ (quot W 2) 10) (quot H 2)) ;; horizonal line
-                 (.dispose g)
-                 (reset! latest-frame (jpeg-bytes bi)))
-
-                ;; ~30fps target; tune as desired
-               (Thread/sleep 33)))
+               ;; ~30fps target; tune as desired
+               (Thread/sleep 10)))
            (catch Exception e
              (println "YUV consumer ended/error:" (.getMessage e))
              ;; Re-open the FIFO when producer restarts
