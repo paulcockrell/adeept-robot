@@ -9,6 +9,7 @@
    [boofcv.alg.misc ImageStatistics]
    [boofcv.struct.image GrayU8]
    [boofcv.io.image ConvertBufferedImage]
+   [boofcv.alg.filter.blur GBlurImageOps]
    [boofcv.alg.filter.binary GThresholdImageOps]
    [boofcv.alg.filter.binary BinaryImageOps]))
 
@@ -19,44 +20,53 @@
 (def ^:private BYTES-Y (* W H))
 (def ^:private BYTES-UV (/ (* W H) 2)) ; skip size (U+V) for YUV420p
 
-(def prev-frame (atom nil))
 (def latest-frame (atom nil))
 
-(defn- jpeg-bytes ^bytes [^BufferedImage bi]
+(defn- encode-jpeg ^bytes [^BufferedImage bi]
   (let [baos (ByteArrayOutputStream.)]
     (ImageIO/write bi "jpg" baos)
     (.toByteArray baos)))
 
-(defn detect-motion!
+(defn find-brightest
+  "Return {:x :y :val} of brightest pixel in the image."
   [^GrayU8 gray]
-  (if-let [^GrayU8 prev @prev-frame]
-    (let [diff (GrayU8. (.width gray) (.heigh gray))]
-      (PixelMath/absDiff gray prev diff)
-      (let [avg-diff (ImageStatistics/mean diff)]
-        (publish! "camera/motion" {:change avg-diff})
-        (when (> avg-diff 5)
-          (publish! "camera/event" {:type :movement-detected}))))
-    (println "Initializing motion baseline"))
-  (reset! prev-frame gray))
+  (let [w (.width gray)
+        h (.height gray)
+        data (.data gray)]
+    (loop [i 0
+           best-x 0
+           best-y 0
+           best-val -1]
+      (if (< i (* w h))
+        (let [v (bit-and 0xFF (aget data i))]
+          (if (> v best-val)
+            (recur (inc i)
+                   (mod i w)
+                   (quot i w)
+                   v)
+            (recur (inc i) best-x best-y best-val)))
+        {:x best-x :y best-y :val best-val}))))
 
-(defn draw-crosshairs!
-  [^GrayU8 gray]
-  (let [bi (ConvertBufferedImage/convertTo gray nil)
-        g  ^Graphics2D (.getGraphics bi)]
-    (.setColor g (Color. 255 255 255))
-    (.setStroke g (BasicStroke. 2.0))
-                 ;; crosshair at center
-    (.drawLine g (quot W 2) (- (quot H 2) 10)
-               (quot W 2) (+ (quot H 2) 10)) ;; vertical line
-    (.drawLine g (- (quot W 2) 10) (quot H 2)
-               (+ (quot W 2) 10) (quot H 2)) ;; horizonal line
-    (.dispose g)
-    (reset! latest-frame (jpeg-bytes bi))))
+(defn find-brightest-smooth
+  "Find brightest pixel after a small Gaussian blur for stability."
+  [^boofcv.struct.image.GrayU8 gray]
+  (let [blurred (GrayU8. (.width gray) (.height gray))]
+    ;; sigma = -1 lets BoofCV choose automatically; radius = 3 means 7×7 kernel
+    (GBlurImageOps/gaussian gray blurred -1 3 nil)
+    (find-brightest blurred)))
 
 (defn handle-frame!
-  [^GrayU8 gray]
-  (detect-motion! gray)
-  (draw-crosshairs! gray))
+  "Highlight the brightest spot, publish its coordinates, and update latest-frame."
+  [^GrayU8 gray ^long W ^long H]
+  (let [{:keys [x y val]} (find-brightest-smooth gray)
+        bi (ConvertBufferedImage/convertTo gray nil true)
+        g  ^Graphics2D (.getGraphics bi)]
+    (.setColor g (Color. 255 255 0))
+    (.setStroke g (BasicStroke. 3))
+    (.drawOval g (max 0 (- x 10)) (max 0 (- y 10)) 20 20)
+    (.dispose g)
+    (publish! "camera/brightest" {:x x :y y :val val :w W :h H})
+    (reset! latest-frame (encode-jpeg bi))))
 
 (defn create-camera
   "Reads YUV420p frames from FIFO (e.g. /tmp/camera.yuv), runs simple BoofCV on Y,
@@ -83,7 +93,7 @@
                (System/arraycopy ybuf 0 (.data gray) 0 BYTES-Y)
 
                ;; Process data
-               (handle-frame! gray)
+               (handle-frame! gray W H)
 
                ;; ~30fps target; tune as desired
                (Thread/sleep 10)))
